@@ -1,0 +1,676 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { Download, MapPin, Star, Box, Sparkles, Search, Palette, Type, Layout } from 'lucide-react';
+
+const MapPosterCreator = () => {
+  const [activeTab, setActiveTab] = useState('street');
+  const [location, setLocation] = useState('New York');
+  const [coordinates, setCoordinates] = useState({ lat: 40.7128, lng: -74.0060 });
+  const [title, setTitle] = useState('NEW YORK');
+  const [subtitle, setSubtitle] = useState('40.7128° N, 74.0060° W');
+  const [tagline, setTagline] = useState('Where dreams are made');
+  const [date, setDate] = useState('2024-01-01');
+  const [theme, setTheme] = useState('dark');
+  const [zodiacSign, setZodiacSign] = useState('aries');
+  const [orientation, setOrientation] = useState('portrait');
+  const canvasRef = useRef(null);
+  const mapContainerRef = useRef(null);
+
+  const themes = {
+    dark: { bg: '#1a1a1a', fg: '#ffffff', accent: '#4a9eff', line: '#333333' },
+    light: { bg: '#f5f5f5', fg: '#1a1a1a', accent: '#ff6b6b', line: '#d0d0d0' },
+    vintage: { bg: '#f4e8d0', fg: '#3d2817', accent: '#8b4513', line: '#c9b896' },
+    ocean: { bg: '#0a2342', fg: '#e8f4f8', accent: '#2ca8e0', line: '#1a4d7a' },
+    sunset: { bg: '#2d1b3d', fg: '#ffeaa7', accent: '#fd79a8', line: '#4a3556' },
+    forest: { bg: '#1b3a2f', fg: '#e8f5e1', accent: '#7cb342', line: '#2d5a47' },
+    minimal: { bg: '#ffffff', fg: '#000000', accent: '#666666', line: '#e0e0e0' },
+    midnight: { bg: '#0d1b2a', fg: '#e0e1dd', accent: '#778da9', line: '#1b263b' }
+  };
+
+  const zodiacSigns = {
+    aries: { symbol: '♈', name: 'Aries', dates: 'Mar 21 - Apr 19', element: 'Fire' },
+    taurus: { symbol: '♉', name: 'Taurus', dates: 'Apr 20 - May 20', element: 'Earth' },
+    gemini: { symbol: '♊', name: 'Gemini', dates: 'May 21 - Jun 20', element: 'Air' },
+    cancer: { symbol: '♋', name: 'Cancer', dates: 'Jun 21 - Jul 22', element: 'Water' },
+    leo: { symbol: '♌', name: 'Leo', dates: 'Jul 23 - Aug 22', element: 'Fire' },
+    virgo: { symbol: '♍', name: 'Virgo', dates: 'Aug 23 - Sep 22', element: 'Earth' },
+    libra: { symbol: '♎', name: 'Libra', dates: 'Sep 23 - Oct 22', element: 'Air' },
+    scorpio: { symbol: '♏', name: 'Scorpio', dates: 'Oct 23 - Nov 21', element: 'Water' },
+    sagittarius: { symbol: '♐', name: 'Sagittarius', dates: 'Nov 22 - Dec 21', element: 'Fire' },
+    capricorn: { symbol: '♑', name: 'Capricorn', dates: 'Dec 22 - Jan 19', element: 'Earth' },
+    aquarius: { symbol: '♒', name: 'Aquarius', dates: 'Jan 20 - Feb 18', element: 'Air' },
+    pisces: { symbol: '♓', name: 'Pisces', dates: 'Feb 19 - Mar 20', element: 'Water' }
+  };
+
+  const searchLocation = async () => {
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`);
+      const data = await response.json();
+      if (data && data[0]) {
+        const lat = parseFloat(data[0].lat);
+        const lng = parseFloat(data[0].lon);
+        setCoordinates({ lat, lng });
+        setSubtitle(`${lat.toFixed(4)}° N, ${Math.abs(lng).toFixed(4)}° ${lng >= 0 ? 'E' : 'W'}`);
+      }
+    } catch (error) {
+      console.error('Location search error:', error);
+    }
+  };
+
+  const drawStreetMap = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const t = themes[theme];
+    
+    const width = orientation === 'portrait' ? 800 : 1200;
+    const height = orientation === 'portrait' ? 1200 : 800;
+    canvas.width = width;
+    canvas.height = height;
+
+    ctx.fillStyle = t.bg;
+    ctx.fillRect(0, 0, width, height);
+
+    const mapHeight = height * 0.6;
+    const mapY = height * 0.15;
+
+    // Draw simplified street map pattern
+    ctx.strokeStyle = t.line;
+    ctx.lineWidth = 2;
+    
+    const centerX = width / 2;
+    const centerY = mapY + mapHeight / 2;
+    const radius = Math.min(width, mapHeight) * 0.35;
+
+    // Draw circular city layout
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius * 0.7, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius * 0.4, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Draw radial streets
+    for (let i = 0; i < 12; i++) {
+      const angle = (i * Math.PI * 2) / 12;
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(
+        centerX + Math.cos(angle) * radius,
+        centerY + Math.sin(angle) * radius
+      );
+      ctx.stroke();
+    }
+
+    // Draw random streets
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 30; i++) {
+      const startAngle = Math.random() * Math.PI * 2;
+      const startRadius = Math.random() * radius;
+      const length = 30 + Math.random() * 50;
+      
+      ctx.beginPath();
+      ctx.moveTo(
+        centerX + Math.cos(startAngle) * startRadius,
+        centerY + Math.sin(startAngle) * startRadius
+      );
+      ctx.lineTo(
+        centerX + Math.cos(startAngle) * startRadius + Math.cos(startAngle + Math.PI / 2) * length,
+        centerY + Math.sin(startAngle) * startRadius + Math.sin(startAngle + Math.PI / 2) * length
+      );
+      ctx.stroke();
+    }
+
+    // Center marker
+    ctx.fillStyle = t.accent;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 8, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Draw text
+    ctx.fillStyle = t.fg;
+    ctx.font = `bold ${width * 0.06}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.fillText(title, width / 2, height * 0.08);
+
+    ctx.font = `${width * 0.025}px Arial`;
+    ctx.fillText(subtitle, width / 2, height * 0.12);
+
+    if (tagline) {
+      ctx.font = `italic ${width * 0.022}px Arial`;
+      ctx.fillText(tagline, width / 2, height * 0.88);
+    }
+  };
+
+  const drawStarMap = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const t = themes[theme];
+    
+    const width = orientation === 'portrait' ? 800 : 1200;
+    const height = orientation === 'portrait' ? 1200 : 800;
+    canvas.width = width;
+    canvas.height = height;
+
+    ctx.fillStyle = t.bg;
+    ctx.fillRect(0, 0, width, height);
+
+    const mapHeight = height * 0.6;
+    const mapY = height * 0.15;
+    const centerX = width / 2;
+    const centerY = mapY + mapHeight / 2;
+    const radius = Math.min(width, mapHeight) * 0.4;
+
+    // Draw outer circle
+    ctx.strokeStyle = t.line;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Draw constellation lines and stars
+    ctx.strokeStyle = t.accent;
+    ctx.fillStyle = t.fg;
+    ctx.lineWidth = 1;
+
+    // Generate random constellation pattern
+    const stars = [];
+    for (let i = 0; i < 80; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.random() * radius * 0.95;
+      const size = Math.random() * 3 + 1;
+      stars.push({
+        x: centerX + Math.cos(angle) * dist,
+        y: centerY + Math.sin(angle) * dist,
+        size
+      });
+    }
+
+    // Draw constellation connections
+    for (let i = 0; i < 15; i++) {
+      const star1 = stars[Math.floor(Math.random() * stars.length)];
+      const star2 = stars[Math.floor(Math.random() * stars.length)];
+      const distance = Math.sqrt((star1.x - star2.x) ** 2 + (star1.y - star2.y) ** 2);
+      
+      if (distance < 150) {
+        ctx.beginPath();
+        ctx.moveTo(star1.x, star1.y);
+        ctx.lineTo(star2.x, star2.y);
+        ctx.stroke();
+      }
+    }
+
+    // Draw stars
+    stars.forEach(star => {
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Draw text
+    ctx.fillStyle = t.fg;
+    ctx.font = `bold ${width * 0.06}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.fillText(title, width / 2, height * 0.08);
+
+    ctx.font = `${width * 0.025}px Arial`;
+    ctx.fillText(date, width / 2, height * 0.12);
+
+    if (subtitle) {
+      ctx.fillText(subtitle, width / 2, height * 0.88);
+    }
+  };
+
+  const draw3DMap = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const t = themes[theme];
+    
+    const width = orientation === 'portrait' ? 800 : 1200;
+    const height = orientation === 'portrait' ? 1200 : 800;
+    canvas.width = width;
+    canvas.height = height;
+
+    ctx.fillStyle = t.bg;
+    ctx.fillRect(0, 0, width, height);
+
+    const mapHeight = height * 0.6;
+    const mapY = height * 0.15;
+    const centerX = width / 2;
+    const centerY = mapY + mapHeight / 2;
+
+    // Draw cel-shaded terrain layers
+    const layers = [
+      { scale: 1.0, color: t.line, opacity: 0.3 },
+      { scale: 0.85, color: t.accent, opacity: 0.5 },
+      { scale: 0.7, color: t.fg, opacity: 0.3 },
+      { scale: 0.55, color: t.accent, opacity: 0.7 },
+      { scale: 0.4, color: t.fg, opacity: 0.5 }
+    ];
+
+    layers.forEach((layer, index) => {
+      const baseWidth = width * 0.5 * layer.scale;
+      const baseHeight = mapHeight * 0.4 * layer.scale;
+      const offsetY = index * 15;
+
+      ctx.fillStyle = layer.color;
+      ctx.globalAlpha = layer.opacity;
+
+      // Draw 3D box/terrain block
+      ctx.beginPath();
+      // Top face
+      ctx.moveTo(centerX, centerY - baseHeight / 2 - offsetY);
+      ctx.lineTo(centerX + baseWidth / 2, centerY - baseHeight / 4 - offsetY);
+      ctx.lineTo(centerX, centerY - offsetY);
+      ctx.lineTo(centerX - baseWidth / 2, centerY - baseHeight / 4 - offsetY);
+      ctx.closePath();
+      ctx.fill();
+
+      // Right face
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY - offsetY);
+      ctx.lineTo(centerX + baseWidth / 2, centerY - baseHeight / 4 - offsetY);
+      ctx.lineTo(centerX + baseWidth / 2, centerY + baseHeight / 4 - offsetY);
+      ctx.lineTo(centerX, centerY + baseHeight / 2 - offsetY);
+      ctx.closePath();
+      ctx.fill();
+
+      // Left face
+      ctx.globalAlpha = layer.opacity * 0.7;
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY - offsetY);
+      ctx.lineTo(centerX - baseWidth / 2, centerY - baseHeight / 4 - offsetY);
+      ctx.lineTo(centerX - baseWidth / 2, centerY + baseHeight / 4 - offsetY);
+      ctx.lineTo(centerX, centerY + baseHeight / 2 - offsetY);
+      ctx.closePath();
+      ctx.fill();
+    });
+
+    ctx.globalAlpha = 1;
+
+    // Draw outlines for cel-shading effect
+    ctx.strokeStyle = t.fg;
+    ctx.lineWidth = 3;
+    layers.forEach((layer, index) => {
+      const baseWidth = width * 0.5 * layer.scale;
+      const baseHeight = mapHeight * 0.4 * layer.scale;
+      const offsetY = index * 15;
+
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY - baseHeight / 2 - offsetY);
+      ctx.lineTo(centerX + baseWidth / 2, centerY - baseHeight / 4 - offsetY);
+      ctx.lineTo(centerX + baseWidth / 2, centerY + baseHeight / 4 - offsetY);
+      ctx.lineTo(centerX, centerY + baseHeight / 2 - offsetY);
+      ctx.lineTo(centerX - baseWidth / 2, centerY + baseHeight / 4 - offsetY);
+      ctx.lineTo(centerX - baseWidth / 2, centerY - baseHeight / 4 - offsetY);
+      ctx.closePath();
+      ctx.stroke();
+    });
+
+    // Draw text
+    ctx.fillStyle = t.fg;
+    ctx.font = `bold ${width * 0.06}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.fillText(title, width / 2, height * 0.08);
+
+    ctx.font = `${width * 0.025}px Arial`;
+    ctx.fillText(subtitle, width / 2, height * 0.12);
+
+    if (tagline) {
+      ctx.font = `italic ${width * 0.022}px Arial`;
+      ctx.fillText(tagline, width / 2, height * 0.88);
+    }
+  };
+
+  const drawZodiac = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const t = themes[theme];
+    const sign = zodiacSigns[zodiacSign];
+    
+    const width = orientation === 'portrait' ? 800 : 1200;
+    const height = orientation === 'portrait' ? 1200 : 800;
+    canvas.width = width;
+    canvas.height = height;
+
+    ctx.fillStyle = t.bg;
+    ctx.fillRect(0, 0, width, height);
+
+    const centerX = width / 2;
+    const centerY = height / 2;
+
+    // Draw zodiac symbol
+    ctx.fillStyle = t.fg;
+    ctx.font = `${width * 0.25}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(sign.symbol, centerX, centerY);
+
+    // Draw decorative circle
+    ctx.strokeStyle = t.accent;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, width * 0.25, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, width * 0.28, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Draw constellation dots
+    ctx.fillStyle = t.fg;
+    const dots = 12;
+    for (let i = 0; i < dots; i++) {
+      const angle = (i * Math.PI * 2) / dots;
+      const radius = width * 0.32;
+      ctx.beginPath();
+      ctx.arc(
+        centerX + Math.cos(angle) * radius,
+        centerY + Math.sin(angle) * radius,
+        4,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+    }
+
+    // Draw text
+    ctx.font = `bold ${width * 0.08}px Arial`;
+    ctx.fillText(sign.name.toUpperCase(), centerX, height * 0.12);
+
+    ctx.font = `${width * 0.03}px Arial`;
+    ctx.fillText(sign.dates, centerX, height * 0.18);
+
+    ctx.font = `italic ${width * 0.025}px Arial`;
+    ctx.fillText(`Element: ${sign.element}`, centerX, height * 0.88);
+  };
+
+  useEffect(() => {
+    switch (activeTab) {
+      case 'street':
+        drawStreetMap();
+        break;
+      case 'star':
+        drawStarMap();
+        break;
+      case '3d':
+        draw3DMap();
+        break;
+      case 'zodiac':
+        drawZodiac();
+        break;
+    }
+  }, [activeTab, theme, title, subtitle, tagline, coordinates, date, zodiacSign, orientation]);
+
+  const downloadPNG = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const link = document.createElement('a');
+    link.download = `${activeTab}-poster-${Date.now()}.png`;
+    link.href = canvas.toDataURL();
+    link.click();
+  };
+
+  const downloadPDF = async () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    // Create a simple PDF export using canvas data
+    const imgData = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.download = `${activeTab}-poster-${Date.now()}.png`;
+    link.href = imgData;
+    link.click();
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Left Sidebar - Controls */}
+      <div className="w-96 bg-white shadow-lg overflow-y-auto">
+        <div className="p-6">
+          <h1 className="text-2xl font-bold mb-6 text-gray-900">Custom Poster Creator</h1>
+          
+          {/* Poster Type Tabs */}
+          <div className="grid grid-cols-2 gap-2 mb-6">
+            <button
+              onClick={() => setActiveTab('street')}
+              className={`p-3 rounded-lg flex items-center justify-center gap-2 transition ${
+                activeTab === 'street' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'
+              }`}
+            >
+              <MapPin size={18} />
+              <span className="text-sm font-medium">Street Map</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('star')}
+              className={`p-3 rounded-lg flex items-center justify-center gap-2 transition ${
+                activeTab === 'star' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'
+              }`}
+            >
+              <Star size={18} />
+              <span className="text-sm font-medium">Star Map</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('3d')}
+              className={`p-3 rounded-lg flex items-center justify-center gap-2 transition ${
+                activeTab === '3d' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'
+              }`}
+            >
+              <Box size={18} />
+              <span className="text-sm font-medium">3D Map</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('zodiac')}
+              className={`p-3 rounded-lg flex items-center justify-center gap-2 transition ${
+                activeTab === 'zodiac' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'
+              }`}
+            >
+              <Sparkles size={18} />
+              <span className="text-sm font-medium">Zodiac</span>
+            </button>
+          </div>
+
+          {/* Location Search (for street and 3d maps) */}
+          {(activeTab === 'street' || activeTab === '3d') && (
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <MapPin size={16} className="inline mr-1" />
+                Location
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && searchLocation()}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter location..."
+                />
+                <button
+                  onClick={searchLocation}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                >
+                  <Search size={18} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Date (for star maps) */}
+          {activeTab === 'star' && (
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Date
+              </label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          )}
+
+          {/* Zodiac Sign Selection */}
+          {activeTab === 'zodiac' && (
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Zodiac Sign
+              </label>
+              <select
+                value={zodiacSign}
+                onChange={(e) => setZodiacSign(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                {Object.entries(zodiacSigns).map(([key, sign]) => (
+                  <option key={key} value={key}>
+                    {sign.symbol} {sign.name} ({sign.dates})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Text Customization */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Type size={16} className="inline mr-1" />
+              Title
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Title..."
+            />
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Subtitle
+            </label>
+            <input
+              type="text"
+              value={subtitle}
+              onChange={(e) => setSubtitle(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Subtitle..."
+            />
+          </div>
+
+          {activeTab !== 'zodiac' && (
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tagline
+              </label>
+              <input
+                type="text"
+                value={tagline}
+                onChange={(e) => setTagline(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Tagline..."
+              />
+            </div>
+          )}
+
+          {/* Theme Selection */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Palette size={16} className="inline mr-1" />
+              Theme
+            </label>
+            <div className="grid grid-cols-4 gap-2">
+              {Object.keys(themes).map((themeName) => (
+                <button
+                  key={themeName}
+                  onClick={() => setTheme(themeName)}
+                  className={`h-12 rounded-lg border-2 transition ${
+                    theme === themeName ? 'border-blue-500 scale-105' : 'border-gray-200'
+                  }`}
+                  style={{ backgroundColor: themes[themeName].bg }}
+                  title={themeName}
+                >
+                  <div className="w-full h-full rounded flex items-center justify-center">
+                    <div 
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: themes[themeName].fg }}
+                    />
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Orientation */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Layout size={16} className="inline mr-1" />
+              Orientation
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => setOrientation('portrait')}
+                className={`p-3 rounded-lg transition ${
+                  orientation === 'portrait' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'
+                }`}
+              >
+                Portrait
+              </button>
+              <button
+                onClick={() => setOrientation('landscape')}
+                className={`p-3 rounded-lg transition ${
+                  orientation === 'landscape' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'
+                }`}
+              >
+                Landscape
+              </button>
+            </div>
+          </div>
+
+          {/* Download Buttons */}
+          <div className="space-y-3">
+            <button
+              onClick={downloadPNG}
+              className="w-full py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center justify-center gap-2 font-medium"
+            >
+              <Download size={18} />
+              Download PNG
+            </button>
+            <button
+              onClick={downloadPDF}
+              className="w-full py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition flex items-center justify-center gap-2 font-medium"
+            >
+              <Download size={18} />
+              Download PDF
+            </button>
+          </div>
+
+          <p className="mt-6 text-xs text-gray-500 text-center">
+            Open Source • No Login Required • Free Forever
+          </p>
+        </div>
+      </div>
+
+      {/* Right Side - Preview */}
+      <div className="flex-1 flex items-center justify-center p-8 bg-gray-100">
+        <div className="bg-white p-8 rounded-lg shadow-xl">
+          <canvas
+            ref={canvasRef}
+            className="max-w-full h-auto"
+            style={{ maxHeight: 'calc(100vh - 120px)' }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default MapPosterCreator;
