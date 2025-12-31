@@ -13,23 +13,20 @@
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
         .grid { display: grid; grid-template-columns: 350px 1fr; gap: 20px; }
         .panel { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 20px; }
-        .panel h2 { font-size: 18px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .panel h2 { font-size: 18px; margin-bottom: 16px; }
         .btn-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .btn { padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; background: white; cursor: pointer; transition: all 0.2s; font-size: 12px; text-align: center; }
         .btn:hover { border-color: #999; }
         .btn.active { border-color: #2563eb; background: #eff6ff; }
         .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; color: #333; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; }
-        .form-group input:focus, .form-group select:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-        .checkbox-group { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
-        .checkbox-group input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        .form-group label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+        .form-group input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
         .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        .export-btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 8px; }
+        .export-btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 8px; }
         .export-btn.primary { background: #2563eb; color: white; }
         .export-btn.primary:hover { background: #1d4ed8; }
         .export-btn.secondary { background: #6b7280; color: white; }
-        .export-btn.secondary:hover { background: #4b5563; }
         .canvas-container { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; justify-content: center; align-items: center; }
         #posterCanvas { max-width: 100%; height: auto; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         @media (max-width: 1024px) { .grid { grid-template-columns: 1fr; } }
@@ -38,7 +35,7 @@
 <body>
     <div class="header">
         <h1>🎨 Custom Poster Generator</h1>
-        <p>Create beautiful map, star map, and typography posters</p>
+        <p>Create beautiful map, star map, and typography posters with premium themes</p>
     </div>
     <div class="container">
         <div class="grid">
@@ -57,15 +54,15 @@
                     <div style="text-align: center; margin: 16px 0; color: #666; font-size: 12px;">— OR —</div>
                     <div class="form-group">
                         <label>Search Location</label>
-                        <input type="text" id="locationSearch" placeholder="Enter city or address..." oninput="handleLocationInput()">
+                        <input type="text" id="locationSearch" placeholder="Enter city..." oninput="handleLocationInput()">
                         <div id="locationSuggestions" style="display:none; max-height: 200px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px; margin-top: 8px; background: white;"></div>
                     </div>
                     <div style="text-align: center; margin: 16px 0; color: #666; font-size: 12px;">— OR —</div>
                     <div class="form-group">
                         <label>Manual Coordinates</label>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                            <input type="number" id="manualLat" placeholder="Latitude" step="0.0001" min="-90" max="90">
-                            <input type="number" id="manualLon" placeholder="Longitude" step="0.0001" min="-180" max="180">
+                            <input type="number" id="manualLat" placeholder="Latitude" step="0.0001">
+                            <input type="number" id="manualLon" placeholder="Longitude" step="0.0001">
                         </div>
                         <button class="btn" onclick="applyManualCoords()" style="width: 100%; margin-top: 8px;">Apply</button>
                     </div>
@@ -94,8 +91,8 @@
                         <input type="text" id="subtitleInput" value="40.7128° N, 74.0060° W" oninput="drawPoster()">
                     </div>
                     <div class="form-group">
-                        <label>Message</label>
-                        <input type="text" id="messageInput" placeholder="Optional..." oninput="drawPoster()">
+                        <label>Message (optional)</label>
+                        <input type="text" id="messageInput" placeholder="Add a message..." oninput="drawPoster()">
                     </div>
                     <div class="form-group">
                         <label>Font Size: <span id="fontSizeValue">48</span>px</label>
@@ -105,10 +102,16 @@
                 <div class="panel">
                     <h2>🎨 Theme</h2>
                     <div class="theme-grid">
-                        <button class="btn active" onclick="setTheme('light')" id="theme-light">Light</button>
+                        <button class="btn active" onclick="setTheme('modern')" id="theme-modern">Modern</button>
                         <button class="btn" onclick="setTheme('dark')" id="theme-dark">Dark</button>
-                        <button class="btn" onclick="setTheme('blue')" id="theme-blue">Blue</button>
+                        <button class="btn" onclick="setTheme('asphalt')" id="theme-asphalt">Asphalt</button>
+                        <button class="btn" onclick="setTheme('nautical')" id="theme-nautical">Nautical</button>
+                        <button class="btn" onclick="setTheme('pink')" id="theme-pink">Pink</button>
+                        <button class="btn" onclick="setTheme('sky')" id="theme-sky">Sky</button>
                         <button class="btn" onclick="setTheme('beige')" id="theme-beige">Beige</button>
+                        <button class="btn" onclick="setTheme('multicolor')" id="theme-multicolor">Multicolor</button>
+                        <button class="btn" onclick="setTheme('cyberpunk')" id="theme-cyberpunk">Cyberpunk</button>
+                        <button class="btn" onclick="setTheme('retro')" id="theme-retro">Retro</button>
                     </div>
                 </div>
                 <div class="panel">
@@ -125,30 +128,294 @@
         </div>
     </div>
     <script>
-        const cities=[{name:'New York',lat:40.7128,lon:-74.0060},{name:'London',lat:51.5074,lon:-0.1278},{name:'Paris',lat:48.8566,lon:2.3522},{name:'Tokyo',lat:35.6762,lon:139.6503}];
-        const brightStars=[{name:'Sirius',ra:6.7525,dec:-16.7161,mag:-1.46},{name:'Canopus',ra:6.3992,dec:-52.6956,mag:-0.72},{name:'Arcturus',ra:14.2610,dec:19.1824,mag:-0.05},{name:'Vega',ra:18.6156,dec:38.7836,mag:0.03},{name:'Capella',ra:5.2781,dec:45.9980,mag:0.08},{name:'Rigel',ra:5.2423,dec:-8.2016,mag:0.12},{name:'Procyon',ra:7.6550,dec:5.2250,mag:0.38},{name:'Betelgeuse',ra:5.9195,dec:7.4070,mag:0.50},{name:'Altair',ra:19.8463,dec:8.8683,mag:0.77},{name:'Aldebaran',ra:4.5987,dec:16.5093,mag:0.85},{name:'Spica',ra:13.4199,dec:-11.1614,mag:0.98},{name:'Antares',ra:16.4901,dec:-26.4320,mag:1.06},{name:'Pollux',ra:7.7553,dec:28.0262,mag:1.14},{name:'Fomalhaut',ra:22.9608,dec:-29.6222,mag:1.16},{name:'Deneb',ra:20.6906,dec:45.2803,mag:1.25},{name:'Regulus',ra:10.1395,dec:11.9672,mag:1.35},{name:'Adhara',ra:6.9771,dec:-28.9721,mag:1.50},{name:'Castor',ra:7.5766,dec:31.8883,mag:1.58},{name:'Bellatrix',ra:5.4188,dec:6.3497,mag:1.64},{name:'Alnilam',ra:5.6036,dec:-1.2019,mag:1.69}];
-        let state={posterType:'map',currentCity:0,theme:'light',fontSize:48,customLocation:null,mapData:null};
-        const themes={light:{bg:'#FFFFFF',fg:'#000000',accent:'#666666'},dark:{bg:'#000000',fg:'#FFFFFF',accent:'#999999'},blue:{bg:'#001F3F',fg:'#FFFFFF',accent:'#7FDBFF'},beige:{bg:'#F5F5DC',fg:'#2C2416',accent:'#8B7355'}};
-        let locationSearchTimeout;
-        async function fetchMapData(lat,lon){try{const r=0.015;const b=`${lat-r},${lon-r},${lat+r},${lon+r}`;const q=`[out:json][timeout:25];(way["highway"~"motorway|trunk|primary|secondary|tertiary|residential|unclassified"](${b});way["highway"~"living_street|service|pedestrian|path|footway"](${b}););out geom;`;const res=await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`);const d=await res.json();state.mapData={lat,lon,streets:d.elements.filter(e=>e.geometry&&e.geometry.length>1).map(e=>({geometry:e.geometry,type:e.tags&&e.tags.highway?e.tags.highway:'unknown'}))};console.log(`Loaded ${state.mapData.streets.length} streets`);drawPoster();}catch(e){console.error('Error:',e);fetchMapDataFallback(lat,lon);}}
-        async function fetchMapDataFallback(lat,lon){try{const r=0.01;const b=`${lat-r},${lon-r},${lat+r},${lon+r}`;const q=`[out:json][timeout:15];(way["highway"](${b}););out geom;`;const res=await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`);const d=await res.json();state.mapData={lat,lon,streets:d.elements.filter(e=>e.geometry&&e.geometry.length>1)};console.log(`Loaded ${state.mapData.streets.length} streets`);drawPoster();}catch(e){console.error('Fallback failed:',e);state.mapData=null;drawPoster();}}
-        function useMyLocation(){const btn=event.target;btn.disabled=true;btn.textContent='📍 Getting location...';if(!navigator.geolocation){alert('GPS not supported');btn.disabled=false;btn.textContent='📍 Use My GPS Location';return;}navigator.geolocation.getCurrentPosition(async(p)=>{const lat=p.coords.latitude;const lon=p.coords.longitude;btn.textContent='✅ Found!';try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);const d=await r.json();const n=d.address.city||d.address.town||d.address.village||d.address.county||d.address.state||'Your Location';state.customLocation={lat,lon,name:n};updateLocationDisplay(n,lat,lon);document.getElementById('titleInput').value=n.toUpperCase();document.getElementById('subtitleInput').value=`${lat.toFixed(4)}° ${lat>0?'N':'S'}, ${Math.abs(lon).toFixed(4)}° ${lon>0?'E':'W'}`;document.getElementById('manualLat').value=lat.toFixed(4);document.getElementById('manualLon').value=lon.toFixed(4);fetchMapData(lat,lon);}catch(e){state.customLocation={lat,lon,name:'Your Location'};updateLocationDisplay('Your Location',lat,lon);document.getElementById('titleInput').value='YOUR LOCATION';document.getElementById('subtitleInput').value=`${lat.toFixed(4)}° ${lat>0?'N':'S'}, ${Math.abs(lon).toFixed(4)}° ${lon>0?'E':'W'}`;fetchMapData(lat,lon);}setTimeout(()=>{btn.disabled=false;btn.textContent='📍 Use My GPS Location';},2000);},(e)=>{btn.disabled=false;btn.textContent='📍 Use My GPS Location';let m='Could not get location. ';if(e.code===e.PERMISSION_DENIED)m+='Allow location access.';else if(e.code===e.POSITION_UNAVAILABLE)m+='Info unavailable.';else if(e.code===e.TIMEOUT)m+='Request timed out.';alert(m);});}
-        async function applyManualCoords(){const lat=parseFloat(document.getElementById('manualLat').value);const lon=parseFloat(document.getElementById('manualLon').value);if(isNaN(lat)||isNaN(lon)){alert('Enter valid coordinates');return;}if(lat<-90||lat>90||lon<-180||lon>180){alert('Invalid range');return;}try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);const d=await r.json();const n=d.address.city||d.address.town||d.address.village||d.address.county||d.address.state||'Custom Location';state.customLocation={lat,lon,name:n};updateLocationDisplay(n,lat,lon);document.getElementById('titleInput').value=n.toUpperCase();document.getElementById('subtitleInput').value=`${lat.toFixed(4)}° ${lat>0?'N':'S'}, ${Math.abs(lon).toFixed(4)}° ${lon>0?'E':'W'}`;fetchMapData(lat,lon);}catch(e){state.customLocation={lat,lon,name:'Custom Location'};updateLocationDisplay('Custom Location',lat,lon);document.getElementById('titleInput').value='CUSTOM LOCATION';document.getElementById('subtitleInput').value=`${lat.toFixed(4)}° ${lat>0?'N':'S'}, ${Math.abs(lon).toFixed(4)}° ${lon>0?'E':'W'}`;fetchMapData(lat,lon);}}
-        function updateLocationDisplay(n,lat,lon){document.getElementById('locationDisplayText').innerHTML=`${n}<br>${lat.toFixed(4)}° ${lat>0?'N':'S'}, ${Math.abs(lon).toFixed(4)}° ${lon>0?'E':'W'}`;document.getElementById('currentLocationDisplay').style.display='block';}
-        async function handleLocationInput(){const q=document.getElementById('locationSearch').value.trim();if(q.length<3){document.getElementById('locationSuggestions').style.display='none';return;}clearTimeout(locationSearchTimeout);locationSearchTimeout=setTimeout(async()=>{try{const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5`);const res=await r.json();if(res.length>0)displayLocationSuggestions(res);}catch(e){console.error('Search error:',e);}},500);}
-        function displayLocationSuggestions(results){const c=document.getElementById('locationSuggestions');c.innerHTML='';c.style.display='block';results.forEach(r=>{const d=document.createElement('div');d.style.padding='10px';d.style.cursor='pointer';d.style.borderBottom='1px solid #eee';d.textContent=r.display_name;d.onmouseover=()=>d.style.background='#f5f5f5';d.onmouseout=()=>d.style.background='white';d.onclick=()=>selectLocation(r);c.appendChild(d);});}
-        function selectLocation(loc){state.customLocation={lat:parseFloat(loc.lat),lon:parseFloat(loc.lon),name:loc.display_name.split(',')[0]};document.getElementById('locationSearch').value=loc.display_name;document.getElementById('locationSuggestions').style.display='none';updateLocationDisplay(state.customLocation.name,state.customLocation.lat,state.customLocation.lon);document.getElementById('titleInput').value=state.customLocation.name.toUpperCase();document.getElementById('subtitleInput').value=`${state.customLocation.lat.toFixed(4)}° ${state.customLocation.lat>0?'N':'S'}, ${Math.abs(state.customLocation.lon).toFixed(4)}° ${state.customLocation.lon>0?'E':'W'}`;document.getElementById('manualLat').value=state.customLocation.lat.toFixed(4);document.getElementById('manualLon').value=state.customLocation.lon.toFixed(4);fetchMapData(state.customLocation.lat,state.customLocation.lon);}
-        function getCurrentLocation(){return state.customLocation||cities[state.currentCity];}
-        function setPosterType(t){state.posterType=t;document.querySelectorAll('.btn-group .btn').forEach(b=>b.classList.remove('active'));document.getElementById(`btn-${t}`).classList.add('active');document.getElementById('starControls').style.display=t==='star'?'block':'none';drawPoster();}
-        function setTheme(t){state.theme=t;document.querySelectorAll('.theme-grid .btn').forEach(b=>b.classList.remove('active'));document.getElementById(`theme-${t}`).classList.add('active');drawPoster();}
-        function updateFontSize(){state.fontSize=parseInt(document.getElementById('fontSizeInput').value);document.getElementById('fontSizeValue').textContent=state.fontSize;drawPoster();}
-        function drawPoster(){const c=document.getElementById('posterCanvas');const ctx=c.getContext('2d');const w=c.width,h=c.height;const col=themes[state.theme];ctx.fillStyle=col.bg;ctx.fillRect(0,0,w,h);if(state.posterType==='map')drawMapPoster(ctx,w,h,col);else if(state.posterType==='star')drawStarPoster(ctx,w,h,col);else drawTypographyPoster(ctx,w,h,col);}
-        function drawMapPoster(ctx,w,h,col){const cx=w/2,cy=h/2;if(state.mapData&&state.mapData.streets.length>0){const loc=getCurrentLocation();const ms=180000;ctx.save();ctx.translate(cx,cy);ctx.strokeStyle=col.fg;ctx.lineWidth=3;ctx.lineCap='round';ctx.lineJoin='round';state.mapData.streets.forEach(s=>{if(!s.geometry||s.geometry.length<2)return;ctx.beginPath();s.geometry.forEach((c,i)=>{const x=(c.lon-loc.lon)*ms*Math.cos(loc.lat*Math.PI/180);const y=-(c.lat-loc.lat)*ms;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();});ctx.fillStyle=col.fg;ctx.beginPath();ctx.arc(0,0,20,0,Math.PI*2);ctx.fill();ctx.strokeStyle=col.bg;ctx.lineWidth=6;ctx.stroke();ctx.restore();}else{ctx.fillStyle=col.accent;ctx.textAlign='center';ctx.font='32px Arial';ctx.fillText('Loading map...',cx,cy);ctx.strokeStyle=col.fg;ctx.lineWidth=2;for(let i=1;i<=3;i++){ctx.beginPath();ctx.arc(cx,cy,i*80,0,Math.PI*2);ctx.stroke();}}drawPosterText(ctx,w,h,col);}
-        function drawStarPoster(ctx,w,h,col){const loc=getCurrentLocation();const date=new Date(`${document.getElementById('dateInput').value}T${document.getElementById('timeInput').value}:00`);const stars=calculateStarPositions(loc.lat,loc.lon,date,w,h);ctx.strokeStyle=col.fg;ctx.globalAlpha=0.2;ctx.lineWidth=2;const vis=stars.filter(s=>s.x>=0&&s.x<=w&&s.y>=0&&s.y<=h*0.65);for(let i=0;i<vis.length;i++){for(let j=i+1;j<vis.length;j++){const s1=vis[i];const s2=vis[j];const d=Math.sqrt((s1.x-s2.x)**2+(s1.y-s2.y)**2);if(d<300&&s1.mag<1.5&&s2.mag<1.5){ctx.beginPath();ctx.moveTo(s1.x,s1.y);ctx.lineTo(s2.x,s2.y);ctx.stroke();}}}ctx.globalAlpha=1;stars.forEach(s=>{if(s.x>=0&&s.x<=w&&s.y>=0&&s.y<=h*0.65){const sz=Math.max(2,8-s.mag*1.5);if(s.mag<1.5){const gs=sz*4;const g=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,gs);g.addColorStop(0,col.fg+'60');g.addColorStop(0.3,col.fg+'30');g.addColorStop(1,col.fg+'00');ctx.fillStyle=g;ctx.beginPath();ctx.arc(s.x,s.y,gs,0,Math.PI*2);ctx.fill();}ctx.fillStyle=col.fg;ctx.beginPath();ctx.arc(s.x,s.y,sz,0,Math.PI*2);ctx.fill();if(s.mag<0.5&&s.name){ctx.fillStyle=col.accent;ctx.font='24px Arial';ctx.textAlign='center';ctx.fillText(s.name,s.x,s.y-sz-15);}}});ctx.fillStyle=col.accent;ctx.globalAlpha=0.6;for(let i=0;i<300;i++){const x=Math.random()*w;const y=Math.random()*h*0.65;const sz=Math.random()*1.5+0.3;ctx.beginPath();ctx.arc(x,y,sz,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;ctx.strokeStyle=col.accent;ctx.lineWidth=2;ctx.globalAlpha=0.3;ctx.beginPath();ctx.moveTo(0,h*0.65);ctx.lineTo(w,h*0.65);ctx.stroke();ctx.globalAlpha=1;drawPosterText(ctx,w,h,col);}
-        function calculateStarPositions(lat,lon,date,cw,ch){const jd=(date.getTime()/86400000)+2440587.5;const t=(jd-2451545.0)/36525.0;let theta=280.46061837+360.98564736629*(jd-2451545.0)+0.000387933*t*t-t*t*t/38710000.0;theta=theta%360;if(theta<0)theta+=360;const lst=((theta+lon)%360)/15;const pos=[];brightStars.forEach(s=>{const ha=lst-s.ra;const har=ha*15*Math.PI/180,decr=s.dec*Math.PI/180,latr=lat*Math.PI/180;const sinAlt=Math.sin(decr)*Math.sin(latr)+Math.cos(decr)*Math.cos(latr)*Math.cos(har);const alt=Math.asin(sinAlt)*180/Math.PI;if(alt>-5){const altr=alt*Math.PI/180;const cosAz=(Math.sin(decr)-Math.sin(altr)*Math.sin(latr))/(Math.cos(altr)*Math.cos(latr));let az=Math.acos(Math.max(-1,Math.min(1,cosAz)))*180/Math.PI;if(Math.sin(har)>0)az=360-az;const ps=ch*0.32;const af=Math.cos(altr)*ps;const r=af*(90-alt)/90;const th=az*Math.PI/180;pos.push({x:cw/2+r*Math.sin(th),y:ch*0.32-r*Math.cos(th),mag:s.mag,name:s.name,alt});}});return pos;}
-        function drawTypographyPoster(ctx,w,h,col){ctx.strokeStyle=col.accent;ctx.lineWidth=2;for(let i=0;i<8;i++){ctx.strokeRect(100+i*80,100+i*80,w-200-i*160,h-200-i*160);}const title=document.getElementById('titleInput').value;const subtitle=document.getElementById('subtitleInput').value;ctx.fillStyle=col.fg;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`bold ${state.fontSize*2.5}px Arial`;ctx.fillText(title,w/2,h/2-80);ctx.font=`${state.fontSize}px Arial`;ctx.fillText(subtitle,w/2,h/2+80);}
-        function drawPosterText(ctx,w,h,col){const title=document.getElementById('titleInput').value;const subtitle=document.getElementById('subtitleInput').value;const msg=document.getElementById('messageInput').value;ctx.fillStyle=col.fg;ctx.textAlign='center';ctx.font=`bold ${state.fontSize*1.2}px Arial`;ctx.fillText(title,w/2,h-300);ctx.font=`${state.fontSize*0.6}px Arial`;ctx.fillText(subtitle,w/2,h-220);if(msg){ctx.font=`italic ${state.fontSize*0.5}px Georgia`;ctx.fillStyle=col.accent;ctx.fillText(msg,w/2,h-160);}ctx.strokeStyle=col.fg;ctx.lineWidth=4;ctx.strokeRect(30,30,w-60,h-60);}
-        function exportPoster(fmt){const c=document.getElementById('posterCanvas');const l=document.createElement('a');l.download=`poster_${Date.now()}.${fmt}`;l.href=c.toDataURL(`image/${fmt}`,1.0);l.click();}
+        const cities=[{name:'New York',lat:40.7128,lon:-74.0060}];
+        const brightStars=[{name:'Sirius',ra:6.75,dec:-16.72,mag:-1.46},{name:'Canopus',ra:6.40,dec:-52.70,mag:-0.72},{name:'Arcturus',ra:14.26,dec:19.18,mag:-0.05},{name:'Vega',ra:18.62,dec:38.78,mag:0.03},{name:'Capella',ra:5.28,dec:45.99,mag:0.08},{name:'Rigel',ra:5.24,dec:-8.20,mag:0.12},{name:'Procyon',ra:7.66,dec:5.23,mag:0.38},{name:'Betelgeuse',ra:5.92,dec:7.41,mag:0.50},{name:'Altair',ra:19.85,dec:8.87,mag:0.77},{name:'Aldebaran',ra:4.60,dec:16.51,mag:0.85}];
+        
+        let state={posterType:'map',theme:'modern',fontSize:48,customLocation:null,mapData:null};
+        const themes={
+            modern:{bg:'#FFFFFF',fg:'#000000',accent:'#666',label:'#F5F5F5',labelText:'#000'},
+            dark:{bg:'#1A1A1A',fg:'#FFF',accent:'#999',label:'#2D2D2D',labelText:'#FFF'},
+            asphalt:{bg:'#2C3E50',fg:'#ECF0F1',accent:'#95A5A6',label:'#34495E',labelText:'#ECF0F1'},
+            nautical:{bg:'#E8F4F8',fg:'#1E3A5F',accent:'#4A90A4',label:'#D0E8F0',labelText:'#1E3A5F'},
+            pink:{bg:'#FFF0F5',fg:'#8B4789',accent:'#D891C5',label:'#FFE0EB',labelText:'#8B4789'},
+            sky:{bg:'#E6F3FF',fg:'#1A4D8F',accent:'#5B9BD5',label:'#CCE5FF',labelText:'#1A4D8F'},
+            beige:{bg:'#F5F5DC',fg:'#2C2416',accent:'#8B7355',label:'#EAE8D0',labelText:'#2C2416'},
+            multicolor:{bg:'#1A1A1A',fg:'#FFF',accent:'#888',label:'#2D2D2D',labelText:'#FFF',colors:['#FF6B6B','#4ECDC4','#FFE66D','#A8E6CF','#FF8B94','#C7CEEA']},
+            cyberpunk:{bg:'#0A0E27',fg:'#0FF',accent:'#F0F',label:'#1A1F3A',labelText:'#0FF',neon:true},
+            retro:{bg:'#FFF8DC',fg:'#D2691E',accent:'#CD853F',label:'#FFEFD5',labelText:'#8B4513',vintage:true}
+        };
+        let locTimeout;
+        
+        async function fetchMapData(lat,lon){
+            try{
+                const r=0.03,b=`${lat-r},${lon-r},${lat+r},${lon+r}`;
+                const q=`[out:json][timeout:25];(way["highway"](${b}););out geom;`;
+                const res=await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`);
+                const d=await res.json();
+                state.mapData={lat,lon,streets:d.elements.filter(e=>e.geometry&&e.geometry.length>1)};
+                drawPoster();
+            }catch(e){console.error(e);state.mapData=null;drawPoster();}
+        }
+        
+        function useMyLocation(){
+            const btn=event.target;
+            btn.disabled=true;btn.textContent='📍 Getting...';
+            if(!navigator.geolocation){alert('GPS not supported');btn.disabled=false;btn.textContent='📍 Use My GPS Location';return;}
+            navigator.geolocation.getCurrentPosition(async(p)=>{
+                const lat=p.coords.latitude,lon=p.coords.longitude;
+                btn.textContent='✅ Found!';
+                try{
+                    const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+                    const d=await r.json();
+                    const n=d.address.city||d.address.town||d.address.village||'Your Location';
+                    state.customLocation={lat,lon,name:n};
+                    updateLocationDisplay(n,lat,lon);
+                    document.getElementById('titleInput').value=n.toUpperCase();
+                    document.getElementById('subtitleInput').value=`${lat.toFixed(4)}° ${lat>0?'N':'S'}, ${Math.abs(lon).toFixed(4)}° ${lon>0?'E':'W'}`;
+                    document.getElementById('manualLat').value=lat.toFixed(4);
+                    document.getElementById('manualLon').value=lon.toFixed(4);
+                    fetchMapData(lat,lon);
+                }catch(e){
+                    state.customLocation={lat,lon,name:'Your Location'};
+                    updateLocationDisplay('Your Location',lat,lon);
+                    fetchMapData(lat,lon);
+                }
+                setTimeout(()=>{btn.disabled=false;btn.textContent='📍 Use My GPS Location';},2000);
+            },(e)=>{btn.disabled=false;btn.textContent='📍 Use My GPS Location';alert('Could not get location');});
+        }
+        
+        async function applyManualCoords(){
+            const lat=parseFloat(document.getElementById('manualLat').value);
+            const lon=parseFloat(document.getElementById('manualLon').value);
+            if(isNaN(lat)||isNaN(lon)||lat<-90||lat>90||lon<-180||lon>180){alert('Invalid coordinates');return;}
+            try{
+                const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+                const d=await r.json();
+                const n=d.address.city||d.address.town||'Custom Location';
+                state.customLocation={lat,lon,name:n};
+                updateLocationDisplay(n,lat,lon);
+                document.getElementById('titleInput').value=n.toUpperCase();
+                document.getElementById('subtitleInput').value=`${lat.toFixed(4)}° ${lat>0?'N':'S'}, ${Math.abs(lon).toFixed(4)}° ${lon>0?'E':'W'}`;
+                fetchMapData(lat,lon);
+            }catch(e){state.customLocation={lat,lon,name:'Custom'};fetchMapData(lat,lon);}
+        }
+        
+        function updateLocationDisplay(n,lat,lon){
+            document.getElementById('locationDisplayText').innerHTML=`${n}<br>${lat.toFixed(4)}°, ${lon.toFixed(4)}°`;
+            document.getElementById('currentLocationDisplay').style.display='block';
+        }
+        
+        async function handleLocationInput(){
+            const q=document.getElementById('locationSearch').value.trim();
+            if(q.length<3){document.getElementById('locationSuggestions').style.display='none';return;}
+            clearTimeout(locTimeout);
+            locTimeout=setTimeout(async()=>{
+                try{
+                    const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5`);
+                    const res=await r.json();
+                    if(res.length>0)displayLocationSuggestions(res);
+                }catch(e){console.error(e);}
+            },500);
+        }
+        
+        function displayLocationSuggestions(results){
+            const c=document.getElementById('locationSuggestions');
+            c.innerHTML='';c.style.display='block';
+            results.forEach(r=>{
+                const d=document.createElement('div');
+                d.style.padding='10px';d.style.cursor='pointer';d.style.borderBottom='1px solid #eee';
+                d.textContent=r.display_name;
+                d.onmouseover=()=>d.style.background='#f5f5f5';
+                d.onmouseout=()=>d.style.background='white';
+                d.onclick=()=>selectLocation(r);
+                c.appendChild(d);
+            });
+        }
+        
+        function selectLocation(loc){
+            state.customLocation={lat:parseFloat(loc.lat),lon:parseFloat(loc.lon),name:loc.display_name.split(',')[0]};
+            document.getElementById('locationSearch').value=loc.display_name;
+            document.getElementById('locationSuggestions').style.display='none';
+            updateLocationDisplay(state.customLocation.name,state.customLocation.lat,state.customLocation.lon);
+            document.getElementById('titleInput').value=state.customLocation.name.toUpperCase();
+            document.getElementById('subtitleInput').value=`${state.customLocation.lat.toFixed(4)}°, ${state.customLocation.lon.toFixed(4)}°`;
+            document.getElementById('manualLat').value=state.customLocation.lat.toFixed(4);
+            document.getElementById('manualLon').value=state.customLocation.lon.toFixed(4);
+            fetchMapData(state.customLocation.lat,state.customLocation.lon);
+        }
+        
+        function getCurrentLocation(){return state.customLocation||cities[0];}
+        
+        function setPosterType(t){
+            state.posterType=t;
+            document.querySelectorAll('.btn-group .btn').forEach(b=>b.classList.remove('active'));
+            document.getElementById(`btn-${t}`).classList.add('active');
+            document.getElementById('starControls').style.display=t==='star'?'block':'none';
+            drawPoster();
+        }
+        
+        function setTheme(t){
+            state.theme=t;
+            document.querySelectorAll('.theme-grid .btn').forEach(b=>b.classList.remove('active'));
+            document.getElementById(`theme-${t}`).classList.add('active');
+            drawPoster();
+        }
+        
+        function updateFontSize(){
+            state.fontSize=parseInt(document.getElementById('fontSizeInput').value);
+            document.getElementById('fontSizeValue').textContent=state.fontSize;
+            drawPoster();
+        }
+        
+        function drawPoster(){
+            const c=document.getElementById('posterCanvas'),ctx=c.getContext('2d');
+            const w=c.width,h=c.height,col=themes[state.theme];
+            ctx.fillStyle=col.bg;ctx.fillRect(0,0,w,h);
+            if(state.posterType==='map')drawMapPoster(ctx,w,h,col);
+            else if(state.posterType==='star')drawStarPoster(ctx,w,h,col);
+            else drawTypographyPoster(ctx,w,h,col);
+        }
+        
+        function drawMapPoster(ctx,w,h,col){
+            const cx=w/2,cy=h/2;
+            if(state.mapData&&state.mapData.streets.length>0){
+                const loc=getCurrentLocation(),ms=140000;
+                ctx.save();ctx.translate(cx,cy);
+                if(col.neon){ctx.shadowBlur=20;ctx.shadowColor=col.fg;}
+                state.mapData.streets.forEach((s,idx)=>{
+                    if(!s.geometry||s.geometry.length<2)return;
+                    ctx.strokeStyle=col.colors?col.colors[idx%col.colors.length]:col.fg;
+                    ctx.lineWidth=col.colors?2.5:2;
+                    ctx.lineCap='round';ctx.lineJoin='round';
+                    ctx.beginPath();
+                    s.geometry.forEach((c,i)=>{
+                        const x=(c.lon-loc.lon)*ms*Math.cos(loc.lat*Math.PI/180);
+                        const y=-(c.lat-loc.lat)*ms;
+                        if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+                    });
+                    ctx.stroke();
+                });
+                if(col.neon)ctx.shadowBlur=0;
+                ctx.fillStyle=col.fg;ctx.beginPath();ctx.arc(0,0,20,0,Math.PI*2);ctx.fill();
+                ctx.strokeStyle=col.bg;ctx.lineWidth=6;ctx.stroke();
+                ctx.restore();
+            }else{
+                ctx.fillStyle=col.accent;ctx.textAlign='center';ctx.font='32px Arial';
+                ctx.fillText('Loading map...',cx,cy);
+            }
+            drawPosterText(ctx,w,h,col);
+        }
+        
+        function drawStarPoster(ctx,w,h,col){
+            const loc=getCurrentLocation();
+            const date=new Date(`${document.getElementById('dateInput').value}T${document.getElementById('timeInput').value}:00`);
+            const stars=calculateStarPositions(loc.lat,loc.lon,date,w,h);
+            if(col.neon){ctx.shadowBlur=15;ctx.shadowColor=col.fg;}
+            ctx.strokeStyle=col.fg;ctx.globalAlpha=0.2;ctx.lineWidth=2;
+            const vis=stars.filter(s=>s.x>=0&&s.x<=w&&s.y>=0&&s.y<=h*0.65);
+            for(let i=0;i<vis.length;i++){
+                for(let j=i+1;j<vis.length;j++){
+                    const s1=vis[i],s2=vis[j],d=Math.sqrt((s1.x-s2.x)**2+(s1.y-s2.y)**2);
+                    if(d<300&&s1.mag<1.5&&s2.mag<1.5){ctx.beginPath();ctx.moveTo(s1.x,s1.y);ctx.lineTo(s2.x,s2.y);ctx.stroke();}
+                }
+            }
+            ctx.globalAlpha=1;
+            stars.forEach(s=>{
+                if(s.x>=0&&s.x<=w&&s.y>=0&&s.y<=h*0.65){
+                    const sz=Math.max(2,8-s.mag*1.5);
+                    if(s.mag<1.5){
+                        const g=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,sz*4);
+                        g.addColorStop(0,(col.neon?col.accent:col.fg)+'60');
+                        g.addColorStop(1,(col.neon?col.accent:col.fg)+'00');
+                        ctx.fillStyle=g;ctx.beginPath();ctx.arc(s.x,s.y,sz*4,0,Math.PI*2);ctx.fill();
+                    }
+                    ctx.fillStyle=col.fg;ctx.beginPath();ctx.arc(s.x,s.y,sz,0,Math.PI*2);ctx.fill();
+                }
+            });
+            ctx.shadowBlur=0;ctx.fillStyle=col.accent;ctx.globalAlpha=0.6;
+            for(let i=0;i<300;i++){
+                const x=Math.random()*w,y=Math.random()*h*0.65,sz=Math.random()*1.5+0.3;
+                ctx.beginPath();ctx.arc(x,y,sz,0,Math.PI*2);ctx.fill();
+            }
+            ctx.globalAlpha=1;
+            drawPosterText(ctx,w,h,col);
+        }
+        
+        function calculateStarPositions(lat,lon,date,cw,ch){
+            const jd=(date.getTime()/86400000)+2440587.5,t=(jd-2451545.0)/36525.0;
+            let theta=280.46061837+360.98564736629*(jd-2451545.0);
+            theta=theta%360;if(theta<0)theta+=360;
+            const lst=((theta+lon)%360)/15,pos=[];
+            brightStars.forEach(s=>{
+                const ha=lst-s.ra,har=ha*15*Math.PI/180,decr=s.dec*Math.PI/180,latr=lat*Math.PI/180;
+                const sinAlt=Math.sin(decr)*Math.sin(latr)+Math.cos(decr)*Math.cos(latr)*Math.cos(har);
+                const alt=Math.asin(sinAlt)*180/Math.PI;
+                if(alt>-5){
+                    const altr=alt*Math.PI/180;
+                    const cosAz=(Math.sin(decr)-Math.sin(altr)*Math.sin(latr))/(Math.cos(altr)*Math.cos(latr));
+                    let az=Math.acos(Math.max(-1,Math.min(1,cosAz)))*180/Math.PI;
+                    if(Math.sin(har)>0)az=360-az;
+                    const ps=ch*0.32,r=ps*(90-alt)/90,th=az*Math.PI/180;
+                    pos.push({x:cw/2+r*Math.sin(th),y:ch*0.32-r*Math.cos(th),mag:s.mag,name:s.name});
+                }
+            });
+            return pos;
+        }
+        
+        function drawTypographyPoster(ctx,w,h,col){
+            if(col.vintage){
+                ctx.strokeStyle=col.accent;ctx.lineWidth=8;ctx.setLineDash([20,10]);
+                for(let i=0;i<5;i++)ctx.strokeRect(150+i*50,150+i*50,w-300-i*100,h-300-i*100);
+                ctx.setLineDash([]);
+            }else if(col.neon){
+                ctx.shadowBlur=20;ctx.shadowColor=col.fg;ctx.strokeStyle=col.fg;ctx.lineWidth=3;
+                for(let i=0;i<6;i++)ctx.strokeRect(100+i*60,100+i*60,w-200-i*120,h-200-i*120);
+                ctx.shadowBlur=0;
+            }else{
+                ctx.strokeStyle=col.accent;ctx.lineWidth=2;
+                for(let i=0;i<8;i++)ctx.strokeRect(100+i*80,100+i*80,w-200-i*160,h-200-i*160);
+            }
+            const title=document.getElementById('titleInput').value;
+            const subtitle=document.getElementById('subtitleInput').value;
+            const titleSize=state.fontSize*2.5,subtitleSize=state.fontSize;
+            ctx.font=`bold ${titleSize}px Arial`;
+            const titleWidth=ctx.measureText(title).width;
+            ctx.fillStyle=col.label;
+            ctx.fillRect(w/2-titleWidth/2-40,h/2-titleSize*0.7-80,titleWidth+80,titleSize*1.2);
+            ctx.fillStyle=col.labelText;ctx.textAlign='center';ctx.textBaseline='middle';
+            ctx.fillText(title,w/2,h/2-80);
+            ctx.font=`${subtitleSize}px Arial`;
+            const subWidth=ctx.measureText(subtitle).width;
+            ctx.fillStyle=col.label;
+            ctx.fillRect(w/2-subWidth/2-30,h/2-subtitleSize*0.7+80,subWidth+60,subtitleSize*1.2);
+            ctx.fillStyle=col.labelText;
+            ctx.fillText(subtitle,w/2,h/2+80);
+        }
+        
+        function drawPosterText(ctx,w,h,col){
+            const title=document.getElementById('titleInput').value;
+            const subtitle=document.getElementById('subtitleInput').value;
+            const msg=document.getElementById('messageInput').value;
+            const titleSize=state.fontSize*1.2,subtitleSize=state.fontSize*0.6;
+            ctx.font=`bold ${titleSize}px Arial`;
+            const titleWidth=ctx.measureText(title).width;
+            if(col.neon){ctx.shadowBlur=15;ctx.shadowColor=col.label;}
+            ctx.fillStyle=col.label;
+            ctx.fillRect(w/2-titleWidth/2-30,h-300-titleSize*0.65,titleWidth+60,titleSize*1.1);
+            ctx.shadowBlur=0;
+            ctx.fillStyle=col.labelText;ctx.textAlign='center';ctx.textBaseline='middle';
+            ctx.fillText(title,w/2,h-300);
+            ctx.font=`${subtitleSize}px Arial`;
+            const subWidth=ctx.measureText(subtitle).width;
+            ctx.fillStyle=col.label;
+            ctx.fillRect(w/2-subWidth/2-25,h-220-subtitleSize*0.65,subWidth+50,subtitleSize*1.1
+                         function exportPoster(fmt){
+            const c=document.getElementById('posterCanvas'),l=document.createElement('a');
+            l.download=`poster_${Date.now()}.${fmt}`;
+            l.href=c.toDataURL(`image/${fmt}`,1.0);
+            l.click();
+        }
+        
         drawPoster();
     </script>
 </body>
