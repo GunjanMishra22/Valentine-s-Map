@@ -407,16 +407,26 @@
             ctx.fillText(title,w/2,h-300);
             ctx.font=`${subtitleSize}px Arial`;
             const subWidth=ctx.measureText(subtitle).width;
-            ctx.fillStyle=col.label;
-            ctx.fillRect(w/2-subWidth/2-25,h-220-subtitleSize*0.65,subWidth+50,subtitleSize*1.1
-                         function exportPoster(fmt){
-            const c=document.getElementById('posterCanvas'),l=document.createElement('a');
-            l.download=`poster_${Date.now()}.${fmt}`;
-            l.href=c.toDataURL(`image/${fmt}`,1.0);
-            l.click();
+            ctx.fillStyle=col.label;ctx.fillRect(w/2-subWidth/2-25,h-220-subtitleSize*0.65,subWidth+50,subtitleSize*1.1);
+        ctx.fillStyle=col.labelText;
+        ctx.fillText(subtitle,w/2,h-220);
+        if(msg){
+            ctx.font=`italic ${state.fontSize*0.5}px Georgia`;
+            const msgWidth=ctx.measureText(msg).width;
+            ctx.fillStyle=col.label+'E0';
+            ctx.fillRect(w/2-msgWidth/2-20,h-160-state.fontSize*0.35,msgWidth+40,state.fontSize*0.6);
+            ctx.fillStyle=col.accent;
+            ctx.fillText(msg,w/2,h-160);
         }
-        
-        drawPoster();
-    </script>
-</body>
-</html>
+        ctx.strokeStyle=col.fg;ctx.lineWidth=4;ctx.strokeRect(30,30,w-60,h-60);
+    }
+    
+    function exportPoster(fmt){
+        const c=document.getElementById('posterCanvas'),l=document.createElement('a');
+        l.download=`poster_${Date.now()}.${fmt}`;
+        l.href=c.toDataURL(`image/${fmt}`,1.0);
+        l.click();
+    }
+    
+    drawPoster();
+</script>
