@@ -29,15 +29,21 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 .export-btn.primary{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff}
 .export-btn.primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(102,126,234,.4)}
 .export-btn.secondary{background:#6c757d;color:#fff}
-.canvas-container{background:#fff;border-radius:16px;padding:30px;box-shadow:0 2px 12px rgba(0,0,0,.08);display:flex;justify-content:center;align-items:center}
+.canvas-container{background:#fff;border-radius:16px;padding:30px;box-shadow:0 2px 12px rgba(0,0,0,.08);display:flex;justify-content:center;align-items:center;position:relative}
 #posterCanvas{max-width:100%;height:auto;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.loading-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.95);display:none;align-items:center;justify-content:center;border-radius:16px;z-index:10}
+.loading-overlay.show{display:flex}
+.spinner{width:60px;height:60px;border:4px solid #e0e0e0;border-top-color:#667eea;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{background:#fee;color:#c33;padding:12px;border-radius:8px;margin-top:12px;font-size:13px;display:none}
+.error-msg.show{display:block}
 @media(max-width:1200px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="header">
 <h1>✨ Premium Poster Generator</h1>
-<p>Create stunning map, star map, and typography posters</p>
+<p>Create stunning map and star map posters</p>
 </div>
 <div class="container">
 <div class="grid">
@@ -47,7 +53,6 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 <div class="btn-group">
 <button class="btn active" onclick="setPosterType('map')" id="btn-map">🗺️<br>Map</button>
 <button class="btn" onclick="setPosterType('star')" id="btn-star">⭐<br>Stars</button>
-<button class="btn" onclick="setPosterType('text')" id="btn-text">📝<br>Text</button>
 </div>
 </div>
 <div class="panel" id="shapePanel" style="display:none">
@@ -89,10 +94,12 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 <div id="mapControls" style="margin-top:20px">
 <div class="form-group">
 <label>🔍 Zoom</label>
-<input type="range" id="zoomInput" min="1" max="5" value="1.2" step="0.1" oninput="updateZoom()">
-<div style="text-align:center;margin-top:8px;font-size:13px;color:#6c757d">Level: <span id="zoomValue">1.2</span>x</div>
+<input type="range" id="zoomInput" min="0.8" max="3" value="1.5" step="0.1" oninput="updateZoom()">
+<div style="text-align:center;margin-top:8px;font-size:13px;color:#6c757d">Level: <span id="zoomValue">1.5</span>x</div>
 </div>
+<button class="export-btn secondary" onclick="retryMapLoad()" id="retryBtn" style="display:none;margin-top:10px">🔄 Retry Loading Map</button>
 </div>
+<div id="mapError" class="error-msg"></div>
 </div>
 <div class="panel">
 <h2>✏️ Text</h2>
@@ -133,12 +140,12 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 <div class="panel" id="themePanel">
 <h2>🎨 Theme</h2>
 <div class="theme-grid">
-<button class="btn active" onclick="setTheme('classic')" id="theme-classic">Classic</button>
+<button class="btn active" onclick="setTheme('darkmode')" id="theme-darkmode">Dark Mode</button>
 <button class="btn" onclick="setTheme('modern')" id="theme-modern">Modern</button>
 <button class="btn" onclick="setTheme('vintage')" id="theme-vintage">Vintage</button>
 <button class="btn" onclick="setTheme('strangerthings')" id="theme-strangerthings">Stranger Things</button>
-<button class="btn" onclick="setTheme('nightsky')" id="theme-nightsky">Night Sky</button>
-<button class="btn" onclick="setTheme('cyberpunk')" id="theme-cyberpunk">Cyberpunk</button>
+<button class="btn" onclick="setTheme('neonpink')" id="theme-neonpink">Neon Pink</button>
+<button class="btn" onclick="setTheme('mintgreen')" id="theme-mintgreen">Mint Green</button>
 </div>
 </div>
 <div class="panel">
@@ -149,6 +156,12 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 </div>
 <div>
 <div class="canvas-container">
+<div class="loading-overlay" id="loadingOverlay">
+<div style="text-align:center">
+<div class="spinner"></div>
+<p style="margin-top:20px;color:#667eea;font-weight:600">Loading map data...</p>
+</div>
+</div>
 <canvas id="posterCanvas" width="2480" height="3508"></canvas>
 </div>
 </div>
@@ -162,23 +175,24 @@ let locTimeout,fetchTimeout,drawTimeout;
 
 let state={
   posterType:'map',
-  theme:'classic',
+  theme:'darkmode',
   shape:'full',
-  zoom:1.2,
+  zoom:1.5,
   loc:{lat:40.7128,lon:-74.006,name:'New York'},
   mapData:null,
   isLoading:false,
   circleColor:'#15203A',
-  isMobile:/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+  isMobile:/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+  loadAttempts:0
 };
 
 const themes={
-  classic:{bg:'#FFF',shapeBg:'#F5F5F5',st:'#E0E0E0',rd:'#B0B0B0',hw:'#808080',wt:'#C0D8E8',rl:'#A0A0A0'},
+  darkmode:{bg:'#0A0A0A',shapeBg:'#141414',st:'#2A2A2A',rd:'#404040',hw:'#606060',wt:'#1A1A1A',rl:'#353535'},
   modern:{bg:'#F8F9FA',shapeBg:'#E8EAED',st:'#D0DAE8',rd:'#A0B0C8',hw:'#607080',wt:'#B0D5F5',rl:'#8090A0'},
   vintage:{bg:'#F4E8D8',shapeBg:'#EAE0D0',st:'#DCD0B8',rd:'#B8A888',hw:'#8B7D67',wt:'#C0D0E0',rl:'#A0906E'},
   strangerthings:{bg:'#0A0A0A',shapeBg:'#141414',st:'#FF1744',rd:'#FF4569',hw:'#FF0033',wt:'#8B0000',rl:'#CC0022',glow:true},
-  nightsky:{bg:'#0A1128',shapeBg:'#15203A',st:'#3A4A6C',rd:'#5D7090',hw:'#7C8BC0',wt:'#2A4A6C',rl:'#6A7A9C'},
-  cyberpunk:{bg:'#0D0221',shapeBg:'#1A0D35',st:'#3D2B5E',rd:'#6A4D8E',hw:'#0FF',wt:'#2A1D4E',rl:'#F06'}
+  neonpink:{bg:'#1A0F1F',shapeBg:'#2A1F2F',st:'#FF1493',rd:'#FF69B4',hw:'#FF85C1',wt:'#8B0066',rl:'#C71585',glow:true},
+  mintgreen:{bg:'#F0FFF4',shapeBg:'#E8FFF0',st:'#98D8C8',rd:'#6FA896',hw:'#48887B',wt:'#A0E8D8',rl:'#5FBA9F'}
 };
 
 const fontSizes={
@@ -188,30 +202,57 @@ const fontSizes={
   xlarge:{title:110,subtitle:55,tagline:40}
 };
 
-async function fetchMapData(lat,lon){
-  if(state.isLoading)return;
+function showLoading(){
+  document.getElementById('loadingOverlay').classList.add('show');
+}
+
+function hideLoading(){
+  document.getElementById('loadingOverlay').classList.remove('show');
+}
+
+function showError(msg){
+  const err=document.getElementById('mapError');
+  err.textContent=msg;
+  err.classList.add('show');
+  document.getElementById('retryBtn').style.display='block';
+}
+
+function hideError(){
+  document.getElementById('mapError').classList.remove('show');
+  document.getElementById('retryBtn').style.display='none';
+}
+
+async function fetchMapData(lat,lon,retry=false){
+  if(state.isLoading&&!retry)return;
+  
   state.isLoading=true;
+  showLoading();
+  hideError();
   
   clearTimeout(fetchTimeout);
   
   try{
-    const r=state.zoom*.054;
+    const r=state.zoom*.035;
     const b=`${lat-r},${lon-r},${lat+r},${lon+r}`;
-    const q=`[out:json][timeout:15];(way["highway"](${b});way["waterway"](${b});way["railway"](${b}););out geom;`;
+    const q=`[out:json][timeout:25];(way["highway"](${b});way["waterway"](${b});way["railway"](${b}););out geom;`;
     
     const controller=new AbortController();
-    fetchTimeout=setTimeout(()=>controller.abort(),15000);
+    fetchTimeout=setTimeout(()=>controller.abort(),25000);
     
     const res=await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`,{
       signal:controller.signal
     });
+    
+    if(!res.ok)throw new Error('API response not OK');
+    
     const d=await res.json();
     
     const filtered=d.elements.filter(e=>e.geometry&&e.geometry.length>1);
     
     const simplified=filtered.map(e=>{
-      if(e.geometry.length>100){
-        const step=Math.ceil(e.geometry.length/50);
+      const maxPoints=30;
+      if(e.geometry.length>maxPoints){
+        const step=Math.ceil(e.geometry.length/maxPoints);
         return {...e,geometry:e.geometry.filter((pt,i)=>i%step===0||i===e.geometry.length-1)};
       }
       return e;
@@ -222,14 +263,34 @@ async function fetchMapData(lat,lon){
       lon:lon,
       elements:simplified
     };
+    
+    state.loadAttempts=0;
+    hideError();
   }catch(e){
-    console.log('Map fetch error:',e.message);
+    console.error('Map fetch error:',e.message);
+    
+    if(state.loadAttempts<2&&!retry){
+      state.loadAttempts++;
+      setTimeout(()=>fetchMapData(lat,lon,true),2000);
+      return;
+    }
+    
+    showError('Unable to load map data. Using simplified view. Click retry to try again.');
+    
     if(!state.mapData){
       state.mapData={lat:lat,lon:lon,elements:[]};
     }
   }finally{
     state.isLoading=false;
+    hideLoading();
     drawPoster();
+  }
+}
+
+function retryMapLoad(){
+  if(state.loc){
+    state.loadAttempts=0;
+    fetchMapData(state.loc.lat,state.loc.lon);
   }
 }
 
@@ -372,14 +433,9 @@ function setPosterType(t){
     themePanel.style.display='block';
     shapePanel.style.display='none';
     state.shape='full';
-    document.getElementById('btn-full').classList.add('active');
-    document.getElementById('btn-circle').classList.remove('active');
-  }else{
-    starControls.style.display='none';
-    mapControls.style.display='none';
-    themePanel.style.display='block';
-    shapePanel.style.display='none';
-    state.shape='full';
+    if(state.loc){
+      fetchMapData(state.loc.lat,state.loc.lon);
+    }
   }
   
   drawPoster();
@@ -432,11 +488,6 @@ function drawPoster(){
     drawMapPoster(ctx,w,h,col);
   }else if(state.posterType==='star'){
     drawStarPoster(ctx,w,h);
-  }else{
-    const col=themes[state.theme];
-    ctx.fillStyle=col.bg;
-    ctx.fillRect(0,0,w,h);
-    drawTypoPoster(ctx,w,h,col);
   }
 }
 
@@ -452,13 +503,13 @@ function drawMapPoster(ctx,w,h,col){
     
     ctx.translate(cx,cy);
     
-    const isStrangerThings=state.theme==='strangerthings';
+    const isGlowTheme=col.glow;
     
     const layers=[
       {tag:'waterway',color:col.wt,width:3.2,alpha:0.75},
       {tag:'railway',color:col.rl,width:2.4,alpha:1},
-      {tag:'highway',types:['footway','path','pedestrian'],color:col.st,width:1.2,alpha:isStrangerThings?0.4:1},
-      {tag:'highway',types:['residential','unclassified','service'],color:col.st,width:2,alpha:isStrangerThings?0.5:1},
+      {tag:'highway',types:['footway','path','pedestrian'],color:col.st,width:1.2,alpha:isGlowTheme?0.4:1},
+      {tag:'highway',types:['residential','unclassified','service'],color:col.st,width:2,alpha:isGlowTheme?0.5:1},
       {tag:'highway',types:['tertiary','secondary','primary'],color:col.rd,width:3.2,alpha:1},
       {tag:'highway',types:['trunk','motorway','trunk_link','motorway_link'],color:col.hw,width:4.5,alpha:1}
     ];
@@ -497,7 +548,7 @@ function drawMapPoster(ctx,w,h,col){
         ctx.lineJoin='round';
         ctx.globalAlpha=layer.alpha||1;
         
-        if(col.glow){
+        if(isGlowTheme){
           ctx.shadowBlur=8;
           ctx.shadowColor=layer.color;
         }
@@ -525,7 +576,7 @@ function drawMapPoster(ctx,w,h,col){
     ctx.fillStyle=col.hw;
     ctx.textAlign='center';
     ctx.font='bold 40px Arial';
-    ctx.fillText(state.isLoading?'Loading map...':'No map data',0,0);
+    ctx.fillText(state.isLoading?'Loading map...':'Map data unavailable',0,0);
   }
   
   ctx.restore();
@@ -727,39 +778,6 @@ function calcStars(lat,lon,date,cw,ch,cx,cy,radius){
   });
   
   return pos;
-}
-
-function drawTypoPoster(ctx,w,h,col){
-  const title=document.getElementById('titleInput').value;
-  const subtitle=document.getElementById('subtitleInput').value;
-  
-  ctx.strokeStyle=col.hw;
-  ctx.lineWidth=2.5;
-  
-  for(let i=0;i<9;i++){
-    const offs=i*90;
-    ctx.strokeRect(100+offs,100+offs,w-200-offs*2,h-200-offs*2);
-  }
-  
-  const font=document.getElementById('fontSelect').value;
-  
-  ctx.font=`bold 180px ${font}`;
-  ctx.textAlign='center';
-  ctx.textBaseline='middle';
-  const tw=ctx.measureText(title).width;
-  ctx.fillStyle=col.hw+'15';
-  ctx.fillRect(w/2-tw/2-50,h/2-140,tw+100,200);
-  ctx.fillStyle=col.hw;
-  ctx.fillText(title,w/2,h/2-80);
-  
-  ctx.font=`60px ${font}`;
-  const sw=ctx.measureText(subtitle).width;
-  ctx.fillStyle=col.hw+'15';
-  ctx.fillRect(w/2-sw/2-40,h/2+40,sw+80,100);
-  ctx.fillStyle=col.rd;
-  ctx.fillText(subtitle,w/2,h/2+90);
-  
-  drawLabels(ctx,w,h,col);
 }
 
 function drawLabels(ctx,w,h,col){
