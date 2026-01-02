@@ -276,7 +276,11 @@ function updateLocationState(lat,lon,name){
   document.getElementById('subtitleInput').value=
     `${lat.toFixed(4)}° ${lat>=0?'N':'S'}, ${Math.abs(lon).toFixed(4)}° ${lon>=0?'E':'W'}`;
   
-  fetchMapData(lat,lon);
+  if(state.posterType==='map'){
+    fetchMapData(lat,lon);
+  }else{
+    drawPoster();
+  }
 }
 
 async function handleLocationInput(){
@@ -340,7 +344,6 @@ function setPosterType(t){
     starControls.style.display='block';
     mapControls.style.display='none';
     themePanel.style.display='none';
-    state.theme='nightsky';
   }else if(t==='map'){
     starControls.style.display='none';
     mapControls.style.display='block';
@@ -373,16 +376,20 @@ function drawPoster(){
   const ctx=c.getContext('2d');
   const w=c.width;
   const h=c.height;
-  const col=themes[state.theme];
   
-  ctx.fillStyle=col.bg;
-  ctx.fillRect(0,0,w,h);
+  ctx.clearRect(0,0,w,h);
   
   if(state.posterType==='map'){
+    const col=themes[state.theme];
+    ctx.fillStyle=col.bg;
+    ctx.fillRect(0,0,w,h);
     drawMapPoster(ctx,w,h,col);
   }else if(state.posterType==='star'){
-    drawStarPoster(ctx,w,h,col);
+    drawStarPoster(ctx,w,h);
   }else{
+    const col=themes[state.theme];
+    ctx.fillStyle=col.bg;
+    ctx.fillRect(0,0,w,h);
     drawTypoPoster(ctx,w,h,col);
   }
 }
@@ -413,11 +420,13 @@ function drawMapPoster(ctx,w,h,col){
     
     ctx.translate(cx,cy);
     
+    const isStrangerThings=state.theme==='strangerthings';
+    
     const layers=[
       {tag:'waterway',color:col.wt,width:3.2,alpha:0.75},
       {tag:'railway',color:col.rl,width:2.4},
-      {tag:'highway',types:['footway','path','pedestrian'],color:col.st,width:1.2},
-      {tag:'highway',types:['residential','unclassified','service'],color:col.st,width:2},
+      {tag:'highway',types:['footway','path','pedestrian'],color:col.st,width:1.2,alpha:isStrangerThings?0.4:1},
+      {tag:'highway',types:['residential','unclassified','service'],color:col.st,width:2,alpha:isStrangerThings?0.5:1},
       {tag:'highway',types:['tertiary','secondary','primary'],color:col.rd,width:3.2},
       {tag:'highway',types:['trunk','motorway','trunk_link','motorway_link'],color:col.hw,width:4.5}
     ];
@@ -486,8 +495,11 @@ function drawMapPoster(ctx,w,h,col){
   drawLabels(ctx,w,h,col);
 }
 
-function drawStarPoster(ctx,w,h,col){
-  const nightCol={bg:'#0A1128',shapeBg:'#15203A',sbg:'#050A15',sfg:'#E8F0FF'};
+function drawStarPoster(ctx,w,h){
+  const nightCol={bg:'#0A1128',shapeBg:'#15203A',sbg:'#050A15',sfg:'#E8F0FF',hw:'#7C8BC0',rd:'#5D7090'};
+  
+  ctx.fillStyle=nightCol.bg;
+  ctx.fillRect(0,0,w,h);
   
   const loc=state.loc;
   const dateVal=document.getElementById('dateInput').value;
@@ -512,34 +524,49 @@ function drawStarPoster(ctx,w,h,col){
     ctx.clip();
   }
   
-  const g=ctx.createRadialGradient(cx,cy*.6,0,cx,cy*.6,h*.4);
+  const starFieldW=state.shape==='circle'?radius*2:w;
+  const starFieldH=state.shape==='circle'?radius*2:h*.8;
+  const starFieldX=state.shape==='circle'?cx-radius:0;
+  const starFieldY=state.shape==='circle'?cy-radius:0;
+  
+  const g=ctx.createRadialGradient(cx,cy*.5,0,cx,cy*.5,h*.5);
   g.addColorStop(0,'rgba(20,30,60,1)');
-  g.addColorStop(.5,nightCol.sbg);
+  g.addColorStop(.4,nightCol.sbg);
   g.addColorStop(1,nightCol.sbg);
   ctx.fillStyle=g;
-  ctx.fillRect(0,0,w,h);
+  if(state.shape==='circle'){
+    ctx.beginPath();
+    ctx.arc(cx,cy,radius,0,Math.PI*2);
+    ctx.fill();
+  }else{
+    ctx.fillRect(0,0,w,h);
+  }
   
-  const skyW=state.shape==='circle'?w*.85:w;
-  const skyH=state.shape==='circle'?h*.5:h*.65;
-  
-  for(let i=0;i<3500;i++){
-    const x=cx+(Math.random()-.5)*skyW;
-    const y=cy*.5+(Math.random()-.5)*skyH;
+  for(let i=0;i<8000;i++){
+    const x=starFieldX+Math.random()*starFieldW;
+    const y=starFieldY+Math.random()*starFieldH;
+    
+    if(state.shape==='circle'){
+      const dx=x-cx;
+      const dy=y-cy;
+      if(dx*dx+dy*dy>radius*radius)continue;
+    }
+    
     const tier=Math.random();
     let sz,alpha;
     
-    if(tier<.02){
-      sz=1.2+Math.random()*.8;
-      alpha=.95;
-    }else if(tier<.08){
-      sz=.8+Math.random()*.6;
-      alpha=.8;
-    }else if(tier<.2){
-      sz=.5+Math.random()*.5;
-      alpha=.6;
+    if(tier<.015){
+      sz=1.4+Math.random()*.9;
+      alpha=.98;
+    }else if(tier<.06){
+      sz=.9+Math.random()*.7;
+      alpha=.85;
+    }else if(tier<.15){
+      sz=.6+Math.random()*.5;
+      alpha=.7;
     }else{
       sz=.3+Math.random()*.4;
-      alpha=.35;
+      alpha=.4;
     }
     
     const tw=.85+Math.sin(Date.now()*.002+i)*.15;
@@ -548,26 +575,33 @@ function drawStarPoster(ctx,w,h,col){
     ctx.arc(x,y,sz,0,Math.PI*2);
     ctx.fill();
     
-    if(tier<.015){
-      ctx.fillStyle=`rgba(255,255,255,${alpha*.3})`;
+    if(tier<.01){
+      ctx.fillStyle=`rgba(255,255,255,${alpha*.25})`;
       ctx.beginPath();
-      ctx.arc(x,y,sz*3,0,Math.PI*2);
+      ctx.arc(x,y,sz*3.5,0,Math.PI*2);
       ctx.fill();
     }
   }
   
-  const stars=calcStars(loc.lat,loc.lon,date,w,h);
-  const vis=stars.filter(s=>
-    s.x>=cx-skyW/2&&s.x<=cx+skyW/2&&
-    s.y>=cy*.5-skyH/2&&s.y<=cy*.5+skyH/2
-  );
+  const stars=calcStars(loc.lat,loc.lon,date,w,h,cx,cy,radius);
+  
+  const inBounds=(x,y)=>{
+    if(state.shape==='circle'){
+      const dx=x-cx;
+      const dy=y-cy;
+      return dx*dx+dy*dy<=radius*radius;
+    }
+    return x>=0&&x<=w&&y>=0&&y<=h;
+  };
+  
+  const vis=stars.filter(s=>inBounds(s.x,s.y));
   
   cons.forEach(pair=>{
     const s1=stars[pair[0]];
     const s2=stars[pair[1]];
     if(s1&&s2&&vis.includes(s1)&&vis.includes(s2)){
-      ctx.strokeStyle='rgba(180,200,255,0.25)';
-      ctx.lineWidth=1.5;
+      ctx.strokeStyle='rgba(180,200,255,0.3)';
+      ctx.lineWidth=1.8;
       ctx.beginPath();
       ctx.moveTo(s1.x,s1.y);
       ctx.lineTo(s2.x,s2.y);
@@ -576,35 +610,35 @@ function drawStarPoster(ctx,w,h,col){
   });
   
   stars.forEach(s=>{
-    if(s.x>=cx-skyW/2&&s.x<=cx+skyW/2&&s.y>=cy*.5-skyH/2&&s.y<=cy*.5+skyH/2){
-      const sz=Math.max(4,12-s.mag*3);
-      const halo=sz*5;
+    if(inBounds(s.x,s.y)){
+      const sz=Math.max(4.5,13-s.mag*3.2);
+      const halo=sz*4.5;
       
       const sg=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,halo);
       sg.addColorStop(0,'rgba(255,255,255,1)');
-      sg.addColorStop(.15,'rgba(240,250,255,0.8)');
-      sg.addColorStop(.4,'rgba(200,220,255,0.3)');
-      sg.addColorStop(1,'rgba(180,200,240,0)');
+      sg.addColorStop(.12,'rgba(245,250,255,0.85)');
+      sg.addColorStop(.35,'rgba(210,225,255,0.4)');
+      sg.addColorStop(1,'rgba(190,210,245,0)');
       ctx.fillStyle=sg;
       ctx.beginPath();
       ctx.arc(s.x,s.y,halo,0,Math.PI*2);
       ctx.fill();
       
       ctx.fillStyle='#FFF';
-      ctx.shadowBlur=6;
-      ctx.shadowColor='rgba(255,255,255,0.9)';
+      ctx.shadowBlur=7;
+      ctx.shadowColor='rgba(255,255,255,0.95)';
       ctx.beginPath();
       ctx.arc(s.x,s.y,sz,0,Math.PI*2);
       ctx.fill();
       ctx.shadowBlur=0;
       
-      if(s.mag<.5&&s.n){
+      if(s.mag<.6&&s.n){
         ctx.fillStyle=nightCol.sfg;
-        ctx.font='bold 24px Arial';
+        ctx.font='bold 26px Arial';
         ctx.textAlign='center';
-        ctx.shadowBlur=3;
-        ctx.shadowColor='rgba(0,0,0,0.7)';
-        ctx.fillText(s.n,s.x,s.y-halo-5);
+        ctx.shadowBlur=4;
+        ctx.shadowColor='rgba(0,0,0,0.8)';
+        ctx.fillText(s.n,s.x,s.y-halo-8);
         ctx.shadowBlur=0;
       }
     }
@@ -614,7 +648,7 @@ function drawStarPoster(ctx,w,h,col){
   drawLabels(ctx,w,h,nightCol);
 }
 
-function calcStars(lat,lon,date,cw,ch){
+function calcStars(lat,lon,date,cw,ch,cx,cy,radius){
   const jd=date.getTime()/86400000+2440587.5;
   let theta=280.46061837+360.98564736629*(jd-2451545);
   theta=theta%360;
@@ -622,6 +656,10 @@ function calcStars(lat,lon,date,cw,ch){
   
   const lst=(theta+lon)%360/15;
   const pos=[];
+  
+  const ps=state.shape==='circle'?radius*.85:Math.min(cw,ch*.6)*.38;
+  const centerX=state.shape==='circle'?cx:cw/2;
+  const centerY=state.shape==='circle'?cy:ch*.35;
   
   bStars.forEach(s=>{
     const ha=lst-s.ra;
@@ -631,19 +669,18 @@ function calcStars(lat,lon,date,cw,ch){
     const sinAlt=Math.sin(decr)*Math.sin(latr)+Math.cos(decr)*Math.cos(latr)*Math.cos(har);
     const alt=Math.asin(sinAlt)*180/Math.PI;
     
-    if(alt>-5){
+    if(alt>-10){
       const altr=alt*Math.PI/180;
       const cosAz=(Math.sin(decr)-Math.sin(altr)*Math.sin(latr))/(Math.cos(altr)*Math.cos(latr));
       let az=Math.acos(Math.max(-1,Math.min(1,cosAz)))*180/Math.PI;
       if(Math.sin(har)>0)az=360-az;
       
-      const ps=ch*.25;
       const r=ps*(90-alt)/90;
       const th=az*Math.PI/180;
       
       pos.push({
-        x:cw/2+r*Math.sin(th),
-        y:ch*.4-r*Math.cos(th),
+        x:centerX+r*Math.sin(th),
+        y:centerY-r*Math.cos(th),
         mag:s.mag,
         n:s.n
       });
@@ -652,87 +689,3 @@ function calcStars(lat,lon,date,cw,ch){
   
   return pos;
 }
-
-function drawTypoPoster(ctx,w,h,col){
-  const title=document.getElementById('titleInput').value;
-  const subtitle=document.getElementById('subtitleInput').value;
-  
-  ctx.strokeStyle=col.hw;
-  ctx.lineWidth=2.5;
-  
-  for(let i=0;i<9;i++){
-    const offs=i*90;
-    ctx.strokeRect(100+offs,100+offs,w-200-offs*2,h-200-offs*2);
-  }
-  
-  const font=document.getElementById('fontSelect').value;
-  
-  ctx.font=`bold 180px ${font}`;
-  ctx.textAlign='center';
-  ctx.textBaseline='middle';
-  const tw=ctx.measureText(title).width;
-  ctx.fillStyle=col.hw+'15';
-  ctx.fillRect(w/2-tw/2-50,h/2-140,tw+100,200);
-  ctx.fillStyle=col.hw;
-  ctx.fillText(title,w/2,h/2-80);
-  
-  ctx.font=`60px ${font}`;
-  const sw=ctx.measureText(subtitle).width;
-  ctx.fillStyle=col.hw+'15';
-  ctx.fillRect(w/2-sw/2-40,h/2+40,sw+80,100);
-  ctx.fillStyle=col.rd;
-  ctx.fillText(subtitle,w/2,h/2+90);
-  
-  drawLabels(ctx,w,h,col);
-}
-
-function drawLabels(ctx,w,h,col){
-  const title=document.getElementById('titleInput').value;
-  const subtitle=document.getElementById('subtitleInput').value;
-  const msg=document.getElementById('messageInput').value;
-  const font=document.getElementById('fontSelect').value;
-  const sizeKey=document.getElementById('fontSizeSelect').value;
-  const sizes=fontSizes[sizeKey];
-  
-  ctx.font=`bold ${sizes.title}px ${font}`;
-  ctx.textAlign='center';
-  ctx.textBaseline='middle';
-  const tw=ctx.measureText(title).width;
-  ctx.fillStyle=col.hw+'15';
-  ctx.fillRect(w/2-tw/2-40,h-340,tw+80,sizes.title+30);
-  ctx.fillStyle=col.hw;
-  ctx.fillText(title,w/2,h-290);
-  
-  ctx.font=`${sizes.subtitle}px ${font}`;
-  const sw=ctx.measureText(subtitle).width;
-  ctx.fillStyle=col.hw+'15';
-  ctx.fillRect(w/2-sw/2-30,h-220,sw+60,sizes.subtitle+35);
-  ctx.fillStyle=col.rd;
-  ctx.fillText(subtitle,w/2,h-185);
-  
-  if(msg){
-    ctx.font=`italic ${sizes.tagline}px Georgia`;
-    const mw=ctx.measureText(msg).width;
-    ctx.fillStyle=col.hw+'10';
-    ctx.fillRect(w/2-mw/2-25,h-130,mw+50,sizes.tagline+25);
-    ctx.fillStyle=col.rd;
-    ctx.fillText(msg,w/2,h-105);
-  }
-  
-  ctx.strokeStyle=col.hw;
-  ctx.lineWidth=6;
-  ctx.strokeRect(40,40,w-80,h-80);
-}
-
-function exportPoster(fmt){
-  const c=document.getElementById('posterCanvas');
-  const l=document.createElement('a');
-  l.download=`poster_${Date.now()}.${fmt}`;
-  l.href=c.toDataURL(`image/${fmt}`,1);
-  l.click();
-}
-
-fetchMapData(state.loc.lat,state.loc.lon);
-</script>
-</body>
-</html>
