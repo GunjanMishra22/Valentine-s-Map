@@ -4,8 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Premium Poster Generator</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600;700&family=Raleway:wght@300;400;600;700&family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Bebas+Neue&family=Vollkorn:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+@font-face{font-family:'Benguiat';src:url('https://cdn.jsdelivr.net/gh/toribiodiego/Stranger-Things@main/ITCBenguiatStd-Bold.woff') format('woff');font-weight:bold;font-style:normal}
+@font-face{font-family:'ITC Benguiat';src:url('https://cdn.jsdelivr.net/gh/toribiodiego/Stranger-Things@main/ITCBenguiatStd-Bold.woff') format('woff');font-weight:bold;font-style:normal}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 .header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:30px 20px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.15)}
@@ -54,6 +56,12 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 <div class="btn-group">
 <button class="btn active" onclick="setShape('full')" id="btn-full">⬛<br>Full</button>
 <button class="btn" onclick="setShape('circle')" id="btn-circle">⭕<br>Circle</button>
+</div>
+<div id="circleColorPanel" style="display:none;margin-top:20px">
+<div class="form-group">
+<label>Circle Background Color</label>
+<input type="color" id="circleColorInput" value="#15203A" onchange="drawPoster()">
+</div>
 </div>
 </div>
 <div class="panel">
@@ -105,11 +113,12 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 <label>Font Family</label>
 <select id="fontSelect" onchange="drawPoster()">
 <option value="Poppins">Poppins</option>
-<option value="Playfair Display">Playfair Display</option>
-<option value="Montserrat">Montserrat</option>
-<option value="Raleway">Raleway</option>
 <option value="Bebas Neue">Bebas Neue</option>
-<option value="Lato">Lato</option>
+<option value="Vollkorn">Vollkorn</option>
+<option value="ITC Benguiat">ITC Benguiat Bold</option>
+<option value="Arial">Thinoo (Arial)</option>
+<option value="Impact">COCO (Impact)</option>
+<option value="Georgia">Caviar Dreams (Georgia)</option>
 </select>
 </div>
 <div class="form-group">
@@ -369,6 +378,14 @@ function setShape(s){
   state.shape=s;
   document.querySelectorAll('#btn-full,#btn-circle').forEach(b=>b.classList.remove('active'));
   document.getElementById(`btn-${s}`).classList.add('active');
+  
+  const circleColorPanel=document.getElementById('circleColorPanel');
+  if(s==='circle'){
+    circleColorPanel.style.display='block';
+  }else{
+    circleColorPanel.style.display='none';
+  }
+  
   drawPoster();
 }
 
@@ -432,11 +449,11 @@ function drawMapPoster(ctx,w,h,col){
     
     const layers=[
       {tag:'waterway',color:col.wt,width:3.2,alpha:0.75},
-      {tag:'railway',color:col.rl,width:2.4},
+      {tag:'railway',color:col.rl,width:2.4,alpha:1},
       {tag:'highway',types:['footway','path','pedestrian'],color:col.st,width:1.2,alpha:isStrangerThings?0.4:1},
       {tag:'highway',types:['residential','unclassified','service'],color:col.st,width:2,alpha:isStrangerThings?0.5:1},
-      {tag:'highway',types:['tertiary','secondary','primary'],color:col.rd,width:3.2},
-      {tag:'highway',types:['trunk','motorway','trunk_link','motorway_link'],color:col.hw,width:4.5}
+      {tag:'highway',types:['tertiary','secondary','primary'],color:col.rd,width:3.2,alpha:1},
+      {tag:'highway',types:['trunk','motorway','trunk_link','motorway_link'],color:col.hw,width:4.5,alpha:1}
     ];
     
     layers.forEach(layer=>{
@@ -504,7 +521,7 @@ function drawMapPoster(ctx,w,h,col){
 }
 
 function drawStarPoster(ctx,w,h){
-  const nightCol={bg:'#0A1128',shapeBg:'#15203A',sbg:'#050A15',sfg:'#E8F0FF',hw:'#7C8BC0',rd:'#5D7090'};
+  const nightCol={bg:'#0A1128',shapeBg:document.getElementById('circleColorInput').value,sbg:'#050A15',sfg:'#E8F0FF',hw:'#7C8BC0',rd:'#5D7090'};
   
   ctx.fillStyle=nightCol.bg;
   ctx.fillRect(0,0,w,h);
@@ -608,8 +625,8 @@ function drawStarPoster(ctx,w,h){
     const s1=stars[pair[0]];
     const s2=stars[pair[1]];
     if(s1&&s2&&vis.includes(s1)&&vis.includes(s2)){
-      ctx.strokeStyle='rgba(180,200,255,0.3)';
-      ctx.lineWidth=1.8;
+      ctx.strokeStyle='rgba(200,220,255,0.65)';
+      ctx.lineWidth=2.2;
       ctx.beginPath();
       ctx.moveTo(s1.x,s1.y);
       ctx.lineTo(s2.x,s2.y);
@@ -619,8 +636,8 @@ function drawStarPoster(ctx,w,h){
   
   stars.forEach(s=>{
     if(inBounds(s.x,s.y)){
-      const sz=Math.max(4.5,13-s.mag*3.2);
-      const halo=sz*4.5;
+      const sz=Math.max(3.5,10-s.mag*2.8);
+      const halo=sz*4;
       
       const sg=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,halo);
       sg.addColorStop(0,'rgba(255,255,255,1)');
