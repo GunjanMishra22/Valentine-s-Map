@@ -689,3 +689,87 @@ function calcStars(lat,lon,date,cw,ch,cx,cy,radius){
   
   return pos;
 }
+
+function drawTypoPoster(ctx,w,h,col){
+  const title=document.getElementById('titleInput').value;
+  const subtitle=document.getElementById('subtitleInput').value;
+  
+  ctx.strokeStyle=col.hw;
+  ctx.lineWidth=2.5;
+  
+  for(let i=0;i<9;i++){
+    const offs=i*90;
+    ctx.strokeRect(100+offs,100+offs,w-200-offs*2,h-200-offs*2);
+  }
+  
+  const font=document.getElementById('fontSelect').value;
+  
+  ctx.font=`bold 180px ${font}`;
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  const tw=ctx.measureText(title).width;
+  ctx.fillStyle=col.hw+'15';
+  ctx.fillRect(w/2-tw/2-50,h/2-140,tw+100,200);
+  ctx.fillStyle=col.hw;
+  ctx.fillText(title,w/2,h/2-80);
+  
+  ctx.font=`60px ${font}`;
+  const sw=ctx.measureText(subtitle).width;
+  ctx.fillStyle=col.hw+'15';
+  ctx.fillRect(w/2-sw/2-40,h/2+40,sw+80,100);
+  ctx.fillStyle=col.rd;
+  ctx.fillText(subtitle,w/2,h/2+90);
+  
+  drawLabels(ctx,w,h,col);
+}
+
+function drawLabels(ctx,w,h,col){
+  const title=document.getElementById('titleInput').value;
+  const subtitle=document.getElementById('subtitleInput').value;
+  const msg=document.getElementById('messageInput').value;
+  const font=document.getElementById('fontSelect').value;
+  const sizeKey=document.getElementById('fontSizeSelect').value;
+  const sizes=fontSizes[sizeKey];
+  
+  ctx.font=`bold ${sizes.title}px ${font}`;
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  const tw=ctx.measureText(title).width;
+  ctx.fillStyle=col.hw+'15';
+  ctx.fillRect(w/2-tw/2-40,h-340,tw+80,sizes.title+30);
+  ctx.fillStyle=col.hw;
+  ctx.fillText(title,w/2,h-290);
+  
+  ctx.font=`${sizes.subtitle}px ${font}`;
+  const sw=ctx.measureText(subtitle).width;
+  ctx.fillStyle=col.hw+'15';
+  ctx.fillRect(w/2-sw/2-30,h-220,sw+60,sizes.subtitle+35);
+  ctx.fillStyle=col.rd;
+  ctx.fillText(subtitle,w/2,h-185);
+  
+  if(msg){
+    ctx.font=`italic ${sizes.tagline}px Georgia`;
+    const mw=ctx.measureText(msg).width;
+    ctx.fillStyle=col.hw+'10';
+    ctx.fillRect(w/2-mw/2-25,h-130,mw+50,sizes.tagline+25);
+    ctx.fillStyle=col.rd;
+    ctx.fillText(msg,w/2,h-105);
+  }
+  
+  ctx.strokeStyle=col.hw;
+  ctx.lineWidth=6;
+  ctx.strokeRect(40,40,w-80,h-80);
+}
+
+function exportPoster(fmt){
+  const c=document.getElementById('posterCanvas');
+  const l=document.createElement('a');
+  l.download=`poster_${Date.now()}.${fmt}`;
+  l.href=c.toDataURL(`image/${fmt}`,1);
+  l.click();
+}
+
+fetchMapData(state.loc.lat,state.loc.lon);
+</script>
+</body>
+</html>
