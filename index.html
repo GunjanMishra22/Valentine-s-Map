@@ -33,11 +33,11 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 #posterCanvas{max-width:100%;height:auto;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
 .loading-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:none;align-items:center;justify-content:center;border-radius:16px;z-index:10}
 .loading-overlay.show{display:flex}
-.spinner{width:80px;height:80px;position:relative}
+.spinner{width:50px;height:50px;position:relative}
 .spinner::before,.spinner::after{content:'';position:absolute;border-radius:50%}
-.spinner::before{width:100%;height:100%;border:5px solid rgba(255,255,255,.2);box-sizing:border-box}
-.spinner::after{width:100%;height:100%;border:5px solid transparent;border-top-color:#fff;border-right-color:#fff;box-sizing:border-box;animation:spin 1.2s cubic-bezier(.5,0,.5,1) infinite}
-.loading-text{color:#fff;font-size:18px;font-weight:600;margin-top:30px;animation:pulse 1.5s ease-in-out infinite}
+.spinner::before{width:100%;height:100%;border:4px solid rgba(255,255,255,.2);box-sizing:border-box}
+.spinner::after{width:100%;height:100%;border:4px solid transparent;border-top-color:#fff;border-right-color:#fff;box-sizing:border-box;animation:spin 1.2s cubic-bezier(.5,0,.5,1) infinite}
+.loading-text{color:#fff;font-size:14px;font-weight:600;margin-top:16px;animation:pulse 1.5s ease-in-out infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
 .error-msg{background:#fee;color:#c33;padding:12px;border-radius:8px;margin-top:12px;font-size:13px;display:none}
@@ -151,6 +151,8 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 <button class="btn" onclick="setTheme('strangerthings')" id="theme-strangerthings">Stranger Things</button>
 <button class="btn" onclick="setTheme('neonpink')" id="theme-neonpink">Neon Pink</button>
 <button class="btn" onclick="setTheme('mintgreen')" id="theme-mintgreen">Mint Green</button>
+<button class="btn" onclick="setTheme('cyberpink')" id="theme-cyberpink">Cyber Pink</button>
+<button class="btn" onclick="setTheme('minecraft')" id="theme-minecraft">Minecraft</button>
 </div>
 </div>
 <div class="panel">
@@ -197,7 +199,9 @@ const themes={
   vintage:{bg:'#F4E8D8',shapeBg:'#EAE0D0',st:'#DCD0B8',rd:'#B8A888',hw:'#8B7D67',wt:'#C0D0E0',rl:'#A0906E'},
   strangerthings:{bg:'#0A0A0A',shapeBg:'#141414',st:'#FF1744',rd:'#FF4569',hw:'#FF0033',wt:'#8B0000',rl:'#CC0022',glow:true},
   neonpink:{bg:'#FFF0F8',shapeBg:'#FFE8F3',st:'#FF1493',rd:'#FF69B4',hw:'#FF1493',wt:'#FFB6D9',rl:'#FF85C1',glow:true},
-  mintgreen:{bg:'#F0FFF4',shapeBg:'#E8FFF0',st:'#98D8C8',rd:'#6FA896',hw:'#48887B',wt:'#A0E8D8',rl:'#5FBA9F'}
+  mintgreen:{bg:'#F0FFF4',shapeBg:'#E8FFF0',st:'#98D8C8',rd:'#6FA896',hw:'#48887B',wt:'#A0E8D8',rl:'#5FBA9F'},
+  cyberpink:{bg:'#0D0221',shapeBg:'#1A0D35',st:'#FF006E',rd:'#FF1493',hw:'#FF10F0',wt:'#8B008B',rl:'#FF1493',glow:true},
+  minecraft:{bg:'#7CBD7C',shapeBg:'#8BC98B',st:'#5C8F5C',rd:'#4A7A4A',hw:'#3A6A3A',wt:'#4A9AEA',rl:'#8B7355'}
 };
 
 const fontSizes={
