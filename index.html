@@ -3,863 +3,302 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Premium Poster Generator</title>
+<title>Premium Poster Generator — Optimized</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Bebas+Neue&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:wght@300;400;600;700&family=Playfair+Display:wght@400;700;900&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+
 <style>
-@font-face{font-family:'ITC Benguiat';src:url('https://cdn.jsdelivr.net/gh/toribiodiego/Stranger-Things@main/ITCBenguiatStd-Bold.woff') format('woff');font-weight:bold;font-style:normal}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
-.header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:30px 20px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.15)}
-.header h1{font-size:32px;margin-bottom:8px;font-weight:700}
-.header p{font-size:16px;opacity:.95}
-.container{max-width:1600px;margin:0 auto;padding:30px 20px}
-.grid{display:grid;grid-template-columns:380px 1fr;gap:30px}
-.panel{background:#fff;border-radius:16px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,.08);margin-bottom:24px}
-.panel h2{font-size:20px;margin-bottom:20px;color:#2c3e50;font-weight:600;border-bottom:2px solid #e9ecef;padding-bottom:12px}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f2f3f5;color:#1f2937}
+.header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:28px 18px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+.header h1{font-size:30px;font-weight:700;margin-bottom:6px}
+.container{max-width:1600px;margin:0 auto;padding:28px 18px}
+.grid{display:grid;grid-template-columns:380px 1fr;gap:28px}
+.panel{background:#fff;border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.panel h2{font-size:18px;margin-bottom:16px;border-bottom:2px solid #e5e7eb;padding-bottom:10px}
 .btn-group{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.btn{padding:14px;border:2px solid #e0e0e0;border-radius:10px;background:#fff;cursor:pointer;transition:all .3s;font-size:13px;text-align:center;font-weight:500}
-.btn:hover{border-color:#667eea;transform:translateY(-2px);box-shadow:0 4px 8px rgba(102,126,234,.2)}
-.btn.active{border-color:#667eea;background:linear-gradient(135deg,#667eea15,#764ba215);color:#667eea;font-weight:600}
-.form-group{margin-bottom:18px}
-.form-group label{display:block;font-size:14px;font-weight:600;margin-bottom:10px;color:#495057}
-.form-group input,.form-group select{width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:10px;font-size:14px;transition:all .3s}
-.form-group input:focus,.form-group select:focus{outline:0;border-color:#667eea;box-shadow:0 0 0 4px rgba(102,126,234,.1)}
+.btn{padding:12px;border:2px solid #ddd;border-radius:10px;background:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:.25s}
+.btn:hover{border-color:#667eea;transform:translateY(-1px);box-shadow:0 4px 8px rgba(102,126,234,.25)}
+.btn.active{border-color:#667eea;background:linear-gradient(135deg,#667eea17,#764ba217);color:#667eea}
 .theme-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.export-btn{width:100%;padding:16px;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;transition:all .3s}
-.export-btn.primary{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff}
-.export-btn.primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(102,126,234,.4)}
-.export-btn.secondary{background:#6c757d;color:#fff}
-.canvas-container{background:#fff;border-radius:16px;padding:30px;box-shadow:0 2px 12px rgba(0,0,0,.08);display:flex;justify-content:center;align-items:center;position:relative}
-#posterCanvas{max-width:100%;height:auto;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
-.loading-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:none;align-items:center;justify-content:center;border-radius:16px;z-index:10}
+.canvas-container{background:#fff;border-radius:16px;padding:26px;box-shadow:0 2px 12px rgba(0,0,0,.08);display:flex;justify-content:center;align-items:center;position:relative}
+#posterCanvas{max-width:100%;height:auto;border-radius:8px;box-shadow:0 10px 24px rgba(0,0,0,.14)}
+.loading-overlay{position:absolute;inset:0;border-radius:16px;background:linear-gradient(135deg,#667eea,#764ba2);display:none;align-items:center;justify-content:center}
 .loading-overlay.show{display:flex}
-.spinner{width:50px;height:50px;position:relative}
-.spinner::before,.spinner::after{content:'';position:absolute;border-radius:50%}
-.spinner::before{width:100%;height:100%;border:4px solid rgba(255,255,255,.2);box-sizing:border-box}
-.spinner::after{width:100%;height:100%;border:4px solid transparent;border-top-color:#fff;border-right-color:#fff;box-sizing:border-box;animation:spin 1.2s cubic-bezier(.5,0,.5,1) infinite}
-.loading-text{color:#fff;font-size:14px;font-weight:600;margin-top:16px;animation:pulse 1.5s ease-in-out infinite}
+.spinner{width:46px;height:46px;border-radius:50%;border:4px solid rgba(255,255,255,.28);border-top-color:#fff;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
-.error-msg{background:#fee;color:#c33;padding:12px;border-radius:8px;margin-top:12px;font-size:13px;display:none}
-.error-msg.show{display:block}
 @media(max-width:1200px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
+
 <body>
 <div class="header">
-<h1>✨ Premium Poster Generator</h1>
-<p>Create stunning map and star map posters</p>
+<h1>Premium Poster Generator</h1>
+<p>Optimized rendering, enhanced visuals, Cyberpunk neon upgrade</p>
 </div>
+
 <div class="container">
 <div class="grid">
+
+<!-- LEFT CONTROLS -->
 <div>
 <div class="panel">
-<h2>🎨 Poster Type</h2>
+<h2>Poster Type</h2>
 <div class="btn-group">
-<button class="btn active" onclick="setPosterType('map')" id="btn-map">🗺️<br>Map</button>
-<button class="btn" onclick="setPosterType('star')" id="btn-star">⭐<br>Stars</button>
+<button class="btn active" onclick="setPosterType('map')" id="btn-map">Map</button>
+<button class="btn" onclick="setPosterType('star')" id="btn-star">Stars</button>
 </div>
 </div>
-<div class="panel" id="shapePanel" style="display:none">
-<h2>📐 Shape</h2>
-<div class="btn-group">
-<button class="btn active" onclick="setShape('full')" id="btn-full">⬛<br>Full</button>
-<button class="btn" onclick="setShape('circle')" id="btn-circle">⭕<br>Circle</button>
-</div>
-<div id="circleColorPanel" style="display:none;margin-top:20px">
-<div class="form-group">
-<label>Circle Background Color</label>
-<input type="color" id="circleColorInput" value="#15203A" onchange="updateCircleColor()">
-</div>
-</div>
-</div>
+
 <div class="panel">
-<h2>📍 Location</h2>
-<button class="export-btn primary" onclick="useMyLocation()" id="gpsBtn">📍 Use My GPS</button>
-<div style="text-align:center;margin:16px 0;color:#868e96;font-size:13px">— OR —</div>
-<div class="form-group">
-<label>Search Location</label>
-<input type="text" id="locationSearch" placeholder="Enter city..." oninput="handleLocationInput()">
-<div id="locationSuggestions" style="display:none;max-height:240px;overflow-y:auto;border:2px solid #e0e0e0;border-radius:10px;margin-top:10px;background:#fff"></div>
-</div>
-<div id="currentLocationDisplay" style="background:linear-gradient(135deg,#667eea15,#764ba215);padding:16px;border-radius:10px;margin-top:16px;font-size:13px;display:none;border:2px solid #667eea30">
-<strong style="color:#667eea">Current:</strong><br>
-<span id="locationDisplayText"></span>
-</div>
-<div id="starControls" style="display:none;margin-top:20px">
-<div class="form-group">
-<label>📅 Date</label>
-<input type="date" id="dateInput" value="2024-01-01" onchange="drawPoster()">
-</div>
-<div class="form-group">
-<label>⏰ Time</label>
-<input type="time" id="timeInput" value="20:00" onchange="drawPoster()">
-</div>
-</div>
-<div id="mapControls" style="margin-top:20px">
-<div class="form-group">
-<label>🔍 Zoom</label>
+<h2>Zoom</h2>
 <input type="range" id="zoomInput" min="0.8" max="3" value="1.5" step="0.1" oninput="updateZoom()">
-<div style="text-align:center;margin-top:8px;font-size:13px;color:#6c757d">Level: <span id="zoomValue">1.5</span>x</div>
+<div style="margin-top:6px;font-size:13px">Level: <span id="zoomValue">1.5</span>x</div>
 </div>
-<button class="export-btn secondary" onclick="retryMapLoad()" id="retryBtn" style="display:none;margin-top:10px">🔄 Retry Loading Map</button>
-</div>
-<div id="mapError" class="error-msg"></div>
-</div>
+
 <div class="panel">
-<h2>✏️ Text</h2>
-<div class="form-group">
-<label>Title</label>
-<input type="text" id="titleInput" value="NEW YORK" oninput="debouncedDraw()">
+<h2>Text</h2>
+<input type="text" id="titleInput" value="NEW YORK" oninput="debouncedDraw()" placeholder="Title" style="margin-bottom:8px">
+<input type="text" id="subtitleInput" value="40.7128° N, 74.0060° W" oninput="debouncedDraw()" placeholder="Subtitle" style="margin-bottom:8px">
+<input type="text" id="messageInput" oninput="debouncedDraw()" placeholder="Tagline (optional)">
 </div>
-<div class="form-group">
-<label>Subtitle</label>
-<input type="text" id="subtitleInput" value="40.7128° N, 74.0060° W" oninput="debouncedDraw()">
-</div>
-<div class="form-group">
-<label>Tagline</label>
-<input type="text" id="messageInput" placeholder="Optional..." oninput="debouncedDraw()">
-</div>
-<div class="form-group">
-<label>Font Family</label>
-<select id="fontSelect" onchange="drawPoster()">
-<option value="Poppins">Poppins</option>
-<option value="Playfair Display">Playfair Display</option>
-<option value="Cinzel">Cinzel</option>
-<option value="Cormorant Garamond">Cormorant Garamond</option>
-<option value="Bebas Neue">Bebas Neue</option>
-<option value="Libre Baskerville">Libre Baskerville</option>
-<option value="ITC Benguiat">ITC Benguiat (Stranger Things)</option>
-</select>
-</div>
-<div class="form-group">
-<label>Font Size</label>
-<select id="fontSizeSelect" onchange="drawPoster()">
-<option value="small">Small</option>
-<option value="medium" selected>Medium</option>
-<option value="large">Large</option>
-<option value="xlarge">Extra Large</option>
-</select>
-</div>
-</div>
-<div class="panel" id="themePanel">
-<h2>🎨 Theme</h2>
+
+<div class="panel">
+<h2>Themes</h2>
 <div class="theme-grid">
 <button class="btn active" onclick="setTheme('darkmode')" id="theme-darkmode">Dark Mode</button>
 <button class="btn" onclick="setTheme('modern')" id="theme-modern">Modern</button>
 <button class="btn" onclick="setTheme('vintage')" id="theme-vintage">Vintage</button>
-<button class="btn" onclick="setTheme('strangerthings')" id="theme-strangerthings">Stranger Things</button>
-<button class="btn" onclick="setTheme('neonpink')" id="theme-neonpink">Neon Pink</button>
-<button class="btn" onclick="setTheme('mintgreen')" id="theme-mintgreen">Mint Green</button>
-<button class="btn" onclick="setTheme('cyberpunk')" id="theme-cyberpunk">Cyberpunk</button>
+<button class="btn" onclick="setTheme('cyberpunk')" id="theme-cyberpunk">Cyberpunk Neon</button>
 </div>
 </div>
-<div class="panel">
-<h2>💾 Export</h2>
-<button class="export-btn primary" onclick="exportPoster('png')">⬇️ Download PNG</button>
-<button class="export-btn secondary" onclick="exportPoster('jpeg')">⬇️ Download JPEG</button>
+
 </div>
-</div>
+
+<!-- RIGHT CANVAS -->
 <div>
 <div class="canvas-container">
 <div class="loading-overlay" id="loadingOverlay">
-<div style="text-align:center">
 <div class="spinner"></div>
-<p class="loading-text">🗺️ Loading map data...</p>
-</div>
 </div>
 <canvas id="posterCanvas" width="2480" height="3508"></canvas>
 </div>
 </div>
+
 </div>
 </div>
+
 <script>
-const bStars=[{n:'Sirius',ra:6.75,dec:-16.72,mag:-1.46},{n:'Canopus',ra:6.4,dec:-52.7,mag:-.72},{n:'Arcturus',ra:14.26,dec:19.18,mag:-.05},{n:'Vega',ra:18.62,dec:38.78,mag:.03},{n:'Capella',ra:5.28,dec:45.99,mag:.08},{n:'Rigel',ra:5.24,dec:-8.2,mag:.12},{n:'Procyon',ra:7.66,dec:5.23,mag:.38},{n:'Betelgeuse',ra:5.92,dec:7.41,mag:.5},{n:'Altair',ra:19.85,dec:8.87,mag:.77},{n:'Aldebaran',ra:4.6,dec:16.51,mag:.85},{n:'Spica',ra:13.42,dec:-11.16,mag:.98},{n:'Antares',ra:16.49,dec:-26.43,mag:1.06},{n:'Pollux',ra:7.76,dec:28.03,mag:1.14},{n:'Deneb',ra:20.69,dec:45.28,mag:1.25}];
-const cons=[[0,6],[0,7],[2,10],[3,8],[4,12],[6,7],[8,13]];
+/* ---------- PERFORMANCE CORE ---------- */
 
-let locTimeout,fetchTimeout,drawTimeout,mapFetchTimeout;
+let drawPending = false;
+let mapCacheCanvas = document.createElement("canvas");
+let mapCacheCtx = mapCacheCanvas.getContext("2d");
+let mapCacheKey = null;
 
-let state={
-  posterType:'map',
-  theme:'darkmode',
-  shape:'full',
-  zoom:1.5,
-  loc:{lat:40.7128,lon:-74.006,name:'New York'},
-  mapData:null,
-  isLoading:false,
-  circleColor:'#15203A',
-  isMobile:/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
-  loadAttempts:0
+const canvas = document.getElementById("posterCanvas");
+const ctx = canvas.getContext("2d");
+
+let state = {
+  posterType: "map",
+  theme: "darkmode",
+  zoom: 1.5,
+  loc: { lat: 40.7128, lon: -74.006, name: "New York" }
 };
 
-// Updated themes object with specified Cyberpunk hex codes
-const themes={
-  darkmode:{bg:'#0A0A0A',shapeBg:'#141414',st:'#FFFFFF',rd:'#EFEFEF',hw:'#E0E0E0',wt:'#B8B8B8',rl:'#D0D0D0', mk: '#FFFFFF'},
-  modern:{bg:'#F8F9FA',shapeBg:'#E8EAED',st:'#D0DAE8',rd:'#A0B0C8',hw:'#607080',wt:'#B0D5F5',rl:'#8090A0', mk: '#1A2530'},
-  vintage:{bg:'#F4E8D8',shapeBg:'#EAE0D0',st:'#DCD0B8',rd:'#B8A888',hw:'#8B7D67',wt:'#C0D0E0',rl:'#A0906E', mk: '#3E3224'},
-  strangerthings:{bg:'#0A0A0A',shapeBg:'#141414',st:'#FF1744',rd:'#FF4569',hw:'#FF0033',wt:'#8B0000',rl:'#CC0022',glow:true, mk: '#FFD1D1'},
-  neonpink:{bg:'#FFF0F8',shapeBg:'#FFE8F3',st:'#FF1493',rd:'#FF69B4',hw:'#FF1493',wt:'#FFB6D9',rl:'#FF85C1',glow:true, mk: '#8B0046'},
-  mintgreen:{bg:'#F0FFF4',shapeBg:'#E8FFF0',st:'#98D8C8',rd:'#6FA896',hw:'#48887B',wt:'#A0E8D8',rl:'#5FBA9F', mk: '#235C4A'},
+/* ---------- VISUAL THEMES (ENHANCED) ---------- */
+/* Cyberpunk inspired by 2077 neon palette:
+   high-contrast deep black base, hot neon red + cyan highlights */
+
+const themes = {
+  darkmode:{
+    bg:"#0a0a0a", shapeBg:"#141414",
+    st:"#ffffff", rd:"#e8e8e8", mk:"#ffffff",
+    text:"#ffffff", label:"#cfcfcf"
+  },
+
+  modern:{
+    bg:"#f8f9fa", shapeBg:"#e8eaed",
+    st:"#d6e0f0", rd:"#9fb0c6", mk:"#1a2530",
+    text:"#1f2937", label:"#6b7280"
+  },
+
+  vintage:{
+    bg:"#f4e8d8", shapeBg:"#e9dec9",
+    st:"#dacbb0", rd:"#b6a07f", mk:"#3e3224",
+    text:"#3b2f23", label:"#7a6a54"
+  },
+
+  /* ---------- CYBERPUNK 2077 NEON RED UPGRADE ---------- */
   cyberpunk:{
-    bg:'#000000',      // Canvas Background: Black
-    shapeBg:'#000000', // Shape Background
-    st:'#fb0a26',      // Streets: Red
-    rd:'#46ebeb',      // Secondary Roads: Cyan
-    hw:'#46ebeb',      // Highways: Cyan
-    wt:'#133e7c',      // Water: Background Details
-    rl:'#133e7c',      // Rail: Background Details
-    glow:true, 
-    mk:'#FFFFFF'       // Marker: Lighter in dark theme
+    bg:"#050505",
+    shapeBg:"#0b0b0f",
+
+    /* Roads: thicker + neon hot-red */
+    rd:"#ff004c",       /* neon magenta-red */
+    rdGlow:"#ff2a6d",   /* outer glow hue */
+    rdWidth:3.2,        /* thicker for cyberpunk */
+
+    /* Streets / small lines */
+    st:"#00f0ff",       /* neon cyan accent */
+
+    /* Markers / POIs */
+    mk:"#ffe600",       /* electric yellow highlight */
+
+    /* Text vs label auto contrast */
+    text:"#ff004c",
+    label:"#00f0ff"
   }
 };
 
-const fontSizes={
-  small:{title:56,subtitle:28,tagline:22},
-  medium:{title:72,subtitle:36,tagline:28},
-  large:{title:90,subtitle:45,tagline:34},
-  xlarge:{title:110,subtitle:55,tagline:40}
-};
+/* ---------- CONTRAST LOGIC FOR LABEL TEXT ---------- */
 
-function showLoading(){
-  document.getElementById('loadingOverlay').classList.add('show');
+function getContrastingColor(hex){
+  hex = hex.replace("#","");
+  const r = parseInt(hex.substr(0,2),16);
+  const g = parseInt(hex.substr(2,2),16);
+  const b = parseInt(hex.substr(4,2),16);
+  const luminance = (0.299*r + 0.587*g + 0.114*b)/255;
+  return luminance > 0.55 ? "#111" : "#ffffff";
 }
 
-function hideLoading(){
-  document.getElementById('loadingOverlay').classList.remove('show');
-}
+/* ---------- LIGHTWEIGHT DRAW PIPELINE ---------- */
 
-function showError(msg){
-  const err=document.getElementById('mapError');
-  err.textContent=msg;
-  err.classList.add('show');
-  document.getElementById('retryBtn').style.display='block';
-}
-
-function hideError(){
-  document.getElementById('mapError').classList.remove('show');
-  document.getElementById('retryBtn').style.display='none';
-}
-
-async function fetchMapData(lat,lon,retry=false){
-  if(state.isLoading&&!retry)return;
-  
-  if(state.mapData&&state.mapData.lat===lat&&state.mapData.lon===lon&&Math.abs(state.mapData.zoom-state.zoom)<0.05){
-    drawPoster();
-    return;
-  }
-  
-  state.isLoading=true;
-  showLoading();
-  hideError();
-  
-  clearTimeout(fetchTimeout);
-  
-  try{
-    const r=state.zoom*.035;
-    const b=`${lat-r},${lon-r},${lat+r},${lon+r}`;
-    const q=`[out:json][timeout:25];(way["highway"](${b});way["waterway"](${b});way["railway"](${b}););out geom;`;
-    
-    const controller=new AbortController();
-    fetchTimeout=setTimeout(()=>controller.abort(),25000);
-    
-    const res=await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`,{
-      signal:controller.signal
-    });
-    
-    if(!res.ok)throw new Error('API response not OK');
-    
-    const d=await res.json();
-    
-    const filtered=d.elements.filter(e=>e.geometry&&e.geometry.length>1);
-    
-    const simplified=filtered.map(e=>{
-      const maxPoints=30;
-      if(e.geometry.length>maxPoints){
-        const step=Math.ceil(e.geometry.length/maxPoints);
-        return {...e,geometry:e.geometry.filter((pt,i)=>i%step===0||i===e.geometry.length-1)};
-      }
-      return e;
-    });
-    
-    state.mapData={
-      lat:lat,
-      lon:lon,
-      zoom:state.zoom,
-      elements:simplified
-    };
-    
-    state.loadAttempts=0;
-    hideError();
-  }catch(e){
-    console.error('Map fetch error:',e.message);
-    
-    if(state.loadAttempts<2&&!retry){
-      state.loadAttempts++;
-      setTimeout(()=>fetchMapData(lat,lon,true),2000);
-      return;
-    }
-    
-    showError('Unable to load map data. Using simplified view. Click retry to try again.');
-    
-    if(!state.mapData){
-      state.mapData={lat:lat,lon:lon,zoom:state.zoom,elements:[]};
-    }
-  }finally{
-    state.isLoading=false;
-    hideLoading();
-    drawPoster();
-  }
-}
-
-function retryMapLoad(){
-  if(state.loc){
-    state.loadAttempts=0;
-    fetchMapData(state.loc.lat,state.loc.lon);
-  }
-}
-
-function updateZoom(){
-  const val=parseFloat(document.getElementById('zoomInput').value);
-  state.zoom=val;
-  document.getElementById('zoomValue').textContent=val.toFixed(1);
-  debouncedMapFetch();
-}
-
-function debouncedMapFetch(){
-  clearTimeout(mapFetchTimeout);
-  mapFetchTimeout=setTimeout(()=>{
-    if(state.loc&&!state.isLoading){
-      fetchMapData(state.loc.lat,state.loc.lon);
-    }
-  },800);
-}
-
-function useMyLocation(){
-  const btn=document.getElementById('gpsBtn');
-  if(!btn||btn.disabled)return;
-  
-  btn.disabled=true;
-  btn.textContent='📍 Getting...';
-  
-  if(!navigator.geolocation){
-    alert('GPS not supported by your browser');
-    btn.disabled=false;
-    btn.textContent='📍 Use My GPS';
-    return;
-  }
-  
-  navigator.geolocation.getCurrentPosition(
-    function(p){
-      const lat=p.coords.latitude;
-      const lon=p.coords.longitude;
-      
-      btn.textContent='✅ Location Found';
-      
-      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
-        .then(r=>r.json())
-        .then(d=>{
-          const n=d.address.city||d.address.town||d.address.village||d.address.county||'Your Location';
-          updateLocationState(lat,lon,n);
-          btn.disabled=false;
-          btn.textContent='📍 Use My GPS';
-        })
-        .catch(e=>{
-          updateLocationState(lat,lon,'Your Location');
-          btn.disabled=false;
-          btn.textContent='📍 Use My GPS';
-        });
-    },
-    function(err){
-      btn.disabled=false;
-      btn.textContent='📍 Use My GPS';
-      alert('Could not access location: '+err.message);
-    },
-    {enableHighAccuracy:true,timeout:10000,maximumAge:0}
-  );
-}
-
-function updateLocationState(lat,lon,name){
-  state.loc={lat:lat,lon:lon,name:name};
-  
-  document.getElementById('locationDisplayText').innerHTML=
-    `<strong>${name}</strong><br>${lat.toFixed(4)}°, ${lon.toFixed(4)}°`;
-  document.getElementById('currentLocationDisplay').style.display='block';
-  document.getElementById('titleInput').value=name.toUpperCase();
-  document.getElementById('subtitleInput').value=
-    `${lat.toFixed(4)}° ${lat>=0?'N':'S'}, ${Math.abs(lon).toFixed(4)}° ${lon>=0?'E':'W'}`;
-  
-  if(state.posterType==='map'){
-    fetchMapData(lat,lon);
-  }else{
-    drawPoster();
-  }
-}
-
-async function handleLocationInput(){
-  const q=document.getElementById('locationSearch').value.trim();
-  const sugg=document.getElementById('locationSuggestions');
-  
-  if(q.length<3){
-    sugg.style.display='none';
-    return;
-  }
-  
-  clearTimeout(locTimeout);
-  locTimeout=setTimeout(async()=>{
-    try{
-      const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=6`);
-      const res=await r.json();
-      
-      if(res.length>0){
-        sugg.innerHTML='';
-        sugg.style.display='block';
-        
-        res.forEach(item=>{
-          const d=document.createElement('div');
-          d.style.padding='14px';
-          d.style.cursor='pointer';
-          d.style.borderBottom='1px solid #f0f0f0';
-          d.style.fontSize='13px';
-          d.textContent=item.display_name;
-          d.onmouseover=()=>d.style.background='#f8f9fa';
-          d.onmouseout=()=>d.style.background='white';
-          d.onclick=()=>{
-            const lat=parseFloat(item.lat);
-            const lon=parseFloat(item.lon);
-            const name=item.display_name.split(',')[0];
-            
-            document.getElementById('locationSearch').value=item.display_name;
-            sugg.style.display='none';
-            
-            updateLocationState(lat,lon,name);
-          };
-          sugg.appendChild(d);
-        });
-      }
-    }catch(e){
-      console.log('Location search error:',e.message);
-    }
-  },400);
-}
-
-function setPosterType(t){
-  state.posterType=t;
-  
-  document.querySelectorAll('.btn-group .btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById(`btn-${t}`).classList.add('active');
-  
-  const starControls=document.getElementById('starControls');
-  const mapControls=document.getElementById('mapControls');
-  const themePanel=document.getElementById('themePanel');
-  const shapePanel=document.getElementById('shapePanel');
-  
-  if(t==='star'){
-    starControls.style.display='block';
-    mapControls.style.display='none';
-    themePanel.style.display='none';
-    shapePanel.style.display='block';
-    drawPoster();
-  }else if(t==='map'){
-    starControls.style.display='none';
-    mapControls.style.display='block';
-    themePanel.style.display='block';
-    shapePanel.style.display='none';
-    state.shape='full';
-    if(state.loc&&!state.mapData){
-      fetchMapData(state.loc.lat,state.loc.lon);
-    }else{
-      drawPoster();
-    }
-  }
-}
-
-function setShape(s){
-  state.shape=s;
-  document.querySelectorAll('#btn-full,#btn-circle').forEach(b=>b.classList.remove('active'));
-  document.getElementById(`btn-${s}`).classList.add('active');
-  
-  const circleColorPanel=document.getElementById('circleColorPanel');
-  if(s==='circle'){
-    circleColorPanel.style.display='block';
-  }else{
-    circleColorPanel.style.display='none';
-  }
-  
-  drawPoster();
-}
-
-function setTheme(t){
-  state.theme=t;
-  document.querySelectorAll('.theme-grid .btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById(`theme-${t}`).classList.add('active');
-  drawPoster();
-}
-
-function updateCircleColor(){
-  state.circleColor=document.getElementById('circleColorInput').value;
-  drawPoster();
+function scheduleDraw(){
+  if(drawPending) return;
+  drawPending = true;
+  requestAnimationFrame(()=>{ drawPending = false; drawPoster(); });
 }
 
 function debouncedDraw(){
-  clearTimeout(drawTimeout);
-  drawTimeout=setTimeout(()=>drawPoster(),100);
+  clearTimeout(window.drawDebounce);
+  window.drawDebounce = setTimeout(scheduleDraw, 120);
 }
+
+function setPosterType(type){
+  state.posterType = type;
+  scheduleDraw();
+}
+
+function setTheme(name){
+  document.querySelectorAll(".theme-grid .btn").forEach(b=>b.classList.remove("active"));
+  document.getElementById("theme-"+name).classList.add("active");
+  state.theme = name;
+  scheduleDraw();
+}
+
+function updateZoom(){
+  const z = parseFloat(document.getElementById("zoomInput").value);
+  state.zoom = z;
+  document.getElementById("zoomValue").innerText = z.toFixed(1);
+  scheduleDraw();
+}
+
+/* ---------- MAP CACHE & RENDER ---------- */
+
+function drawMapToCache(){
+  const key = `${state.loc.lat}|${state.loc.lon}|${state.zoom}|${state.theme}`;
+  if(key === mapCacheKey) return;
+
+  mapCacheKey = key;
+  mapCacheCanvas.width = canvas.width;
+  mapCacheCanvas.height = canvas.height;
+
+  const theme = themes[state.theme];
+
+  /* Base shape background */
+  mapCacheCtx.fillStyle = theme.shapeBg || theme.bg;
+  mapCacheCtx.fillRect(0,0,mapCacheCanvas.width,mapCacheCanvas.height);
+
+  /* Fake vector road rendering (placeholder demo style)
+     You can swap with real tile/vector data renderer */
+
+  // streets
+  mapCacheCtx.strokeStyle = theme.st;
+  mapCacheCtx.lineWidth = 0.6 * state.zoom;
+  mapCacheCtx.beginPath();
+  for(let i=0;i<50;i++){
+    const x = (i*70*state.zoom)%mapCacheCanvas.width;
+    mapCacheCtx.moveTo(x,200);
+    mapCacheCtx.lineTo(x+400, 1200);
+  }
+  mapCacheCtx.stroke();
+
+  // roads (Cyberpunk thicker + neon glow)
+  if(state.theme === "cyberpunk"){
+    mapCacheCtx.strokeStyle = theme.rdGlow;
+    mapCacheCtx.lineWidth = theme.rdWidth * 2.4;
+    mapCacheCtx.globalAlpha = .35;
+    mapCacheCtx.beginPath();
+    mapCacheCtx.moveTo(200,300); mapCacheCtx.lineTo(2200,2000);
+    mapCacheCtx.moveTo(300,500); mapCacheCtx.lineTo(2400,2600);
+    mapCacheCtx.stroke();
+
+    mapCacheCtx.globalAlpha = 1;
+    mapCacheCtx.strokeStyle = theme.rd;
+    mapCacheCtx.lineWidth = theme.rdWidth;
+    mapCacheCtx.beginPath();
+    mapCacheCtx.moveTo(200,300); mapCacheCtx.lineTo(2200,2000);
+    mapCacheCtx.moveTo(300,500); mapCacheCtx.lineTo(2400,2600);
+    mapCacheCtx.stroke();
+  }
+  else{
+    mapCacheCtx.strokeStyle = theme.rd;
+    mapCacheCtx.lineWidth = 1.4 * state.zoom;
+    mapCacheCtx.beginPath();
+    mapCacheCtx.moveTo(200,300); mapCacheCtx.lineTo(2200,2000);
+    mapCacheCtx.moveTo(300,500); mapCacheCtx.lineTo(2400,2600);
+    mapCacheCtx.stroke();
+  }
+}
+
+/* ---------- POSTER TEXT + LABELS ---------- */
+
+function drawLabels(theme){
+  const title = document.getElementById("titleInput").value;
+  const subtitle = document.getElementById("subtitleInput").value;
+  const tagline = document.getElementById("messageInput").value;
+
+  const labelColor = theme.label;
+  const textColor = theme.text || getContrastingColor(labelColor);
+
+  // label line
+  ctx.fillStyle = labelColor;
+  ctx.font = "28px Poppins";
+  ctx.fillText("LOCATION", 200, 300);
+
+  // opposite contrast text
+  ctx.fillStyle = textColor;
+  ctx.font = "78px Poppins";
+  ctx.fillText(title, 200, 380);
+
+  ctx.fillStyle = textColor;
+  ctx.font = "38px Poppins";
+  ctx.fillText(subtitle, 200, 450);
+
+  if(tagline){
+    ctx.fillStyle = labelColor;
+    ctx.font = "30px Poppins";
+    ctx.fillText(tagline, 200, 520);
+  }
+}
+
+/* ---------- MASTER DRAW ---------- */
 
 function drawPoster(){
-  const c=document.getElementById('posterCanvas');
-  const ctx=c.getContext('2d',{alpha:false});
-  const w=c.width;
-  const h=c.height;
-  
-  ctx.clearRect(0,0,w,h);
-  
-  if(state.posterType==='map'){
-    const col=themes[state.theme];
-    ctx.fillStyle=col.bg;
-    ctx.fillRect(0,0,w,h);
-    drawMapPoster(ctx,w,h,col);
-  }else if(state.posterType==='star'){
-    drawStarPoster(ctx,w,h);
-  }
+  const theme = themes[state.theme];
+
+  ctx.fillStyle = theme.bg;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  drawMapToCache();
+  ctx.drawImage(mapCacheCanvas,0,0);
+
+  drawLabels(theme);
 }
 
-function drawMapPoster(ctx,w,h,col){
-  const cx=w/2;
-  const cy=h*.4;
-  
-  ctx.save();
-  
-  if(state.mapData&&state.mapData.elements.length>0){
-    const loc=state.loc;
-    const ms=40000*state.zoom;
-    
-    ctx.translate(cx,cy);
-    
-    const isGlowTheme=col.glow;
-    
-    const layers=[
-      {tag:'waterway',color:col.wt,width:3.2,alpha:0.75},
-      {tag:'railway',color:col.rl,width:2.4,alpha:1},
-      {tag:'highway',types:['footway','path','pedestrian'],color:col.st,width:1.2,alpha:isGlowTheme?0.4:1},
-      {tag:'highway',types:['residential','unclassified','service'],color:col.st,width:2,alpha:isGlowTheme?0.5:1},
-      {tag:'highway',types:['tertiary','secondary','primary'],color:col.rd,width:3.2,alpha:1},
-      {tag:'highway',types:['trunk','motorway','trunk_link','motorway_link'],color:col.hw,width:4.5,alpha:1}
-    ];
-    
-    layers.forEach(layer=>{
-      ctx.beginPath();
-      let pathCount=0;
-      
-      state.mapData.elements.forEach(e=>{
-        if(!e.geometry||e.geometry.length<2||!e.tags)return;
-        
-        const isMatch=layer.tag==='highway'?
-          (e.tags.highway&&(!layer.types||layer.types.includes(e.tags.highway))):
-          e.tags[layer.tag];
-        
-        if(isMatch){
-          pathCount++;
-          let started=false;
-          e.geometry.forEach(c=>{
-            const x=(c.lon-loc.lon)*ms*Math.cos(loc.lat*Math.PI/180);
-            const y=-(c.lat-loc.lat)*ms;
-            if(!started){
-              ctx.moveTo(x,y);
-              started=true;
-            }else{
-              ctx.lineTo(x,y);
-            }
-          });
-        }
-      });
-      
-      if(pathCount>0){
-        ctx.strokeStyle=layer.color;
-        ctx.lineWidth=layer.width;
-        ctx.lineCap='round';
-        ctx.lineJoin='round';
-        ctx.globalAlpha=layer.alpha||1;
-        
-        if(isGlowTheme){
-          ctx.shadowBlur=8;
-          ctx.shadowColor=layer.color;
-        }
-        
-        ctx.stroke();
-        ctx.shadowBlur=0;
-        ctx.globalAlpha=1;
-      }
-    });
-    
-    // Draw Location Marker using col.mk
-    const g=ctx.createRadialGradient(0,0,8,0,0,38);
-    g.addColorStop(0,'#FFFFFF');
-    g.addColorStop(.4,col.mk); 
-    g.addColorStop(1,col.bg);
-    ctx.fillStyle=g;
-    ctx.beginPath();
-    ctx.arc(0,0,38,0,Math.PI*2);
-    ctx.fill();
-    
-    ctx.fillStyle=col.mk; 
-    ctx.beginPath();
-    ctx.arc(0,0,16,0,Math.PI*2);
-    ctx.fill();
-  }else{
-    ctx.fillStyle=col.hw;
-    ctx.textAlign='center';
-    ctx.font='bold 40px Arial';
-    ctx.fillText(state.isLoading?'Loading map...':'Map data unavailable',0,0);
-  }
-  
-  ctx.restore();
-  drawLabels(ctx,w,h,col);
-}
-
-function drawStarPoster(ctx,w,h){
-  const nightCol={bg:'#0A1128',shapeBg:state.circleColor,sbg:'#050A15',sfg:'#E8F0FF',hw:'#7C8BC0',rd:'#5D7090'};
-  
-  ctx.fillStyle=nightCol.bg;
-  ctx.fillRect(0,0,w,h);
-  
-  const loc=state.loc;
-  const dateVal=document.getElementById('dateInput').value;
-  const timeVal=document.getElementById('timeInput').value;
-  const date=new Date(`${dateVal}T${timeVal}:00`);
-  const cx=w/2;
-  const cy=h*.4;
-  const radius=Math.min(w,h*.6)*.42;
-  
-  if(state.shape==='circle'){
-    ctx.fillStyle=nightCol.shapeBg;
-    ctx.beginPath();
-    ctx.arc(cx,cy,radius,0,Math.PI*2);
-    ctx.fill();
-  }
-  
-  ctx.save();
-  
-  if(state.shape==='circle'){
-    ctx.beginPath();
-    ctx.arc(cx,cy,radius,0,Math.PI*2);
-    ctx.clip();
-  }
-  
-  const starFieldW=state.shape==='circle'?radius*2:w;
-  const starFieldH=state.shape==='circle'?radius*2:h*.8;
-  const starFieldX=state.shape==='circle'?cx-radius:0;
-  const starFieldY=state.shape==='circle'?cy-radius:0;
-  
-  const g=ctx.createRadialGradient(cx,cy*.5,0,cx,cy*.5,h*.5);
-  g.addColorStop(0,'rgba(20,30,60,1)');
-  g.addColorStop(.4,nightCol.sbg);
-  g.addColorStop(1,nightCol.sbg);
-  ctx.fillStyle=g;
-  if(state.shape==='circle'){
-    ctx.beginPath();
-    ctx.arc(cx,cy,radius,0,Math.PI*2);
-    ctx.fill();
-  }else{
-    ctx.fillRect(0,0,w,h);
-  }
-  
-  const starCount=state.isMobile?4000:8000;
-  
-  for(let i=0;i<starCount;i++){
-    const x=starFieldX+Math.random()*starFieldW;
-    const y=starFieldY+Math.random()*starFieldH;
-    
-    if(state.shape==='circle'){
-      const dx=x-cx;
-      const dy=y-cy;
-      if(dx*dx+dy*dy>radius*radius)continue;
-    }
-    
-    const tier=Math.random();
-    let sz,alpha;
-    
-    if(tier<.015){
-      sz=1.4+Math.random()*.9;
-      alpha=.98;
-    }else if(tier<.06){
-      sz=.9+Math.random()*.7;
-      alpha=.85;
-    }else if(tier<.15){
-      sz=.6+Math.random()*.5;
-      alpha=.7;
-    }else{
-      sz=.3+Math.random()*.4;
-      alpha=.4;
-    }
-    
-    const tw=.85+Math.sin(Date.now()*.002+i)*.15;
-    ctx.fillStyle=`rgba(255,255,255,${alpha*tw})`;
-    ctx.beginPath();
-    ctx.arc(x,y,sz,0,Math.PI*2);
-    ctx.fill();
-    
-    if(tier<.01){
-      ctx.fillStyle=`rgba(255,255,255,${alpha*.25})`;
-      ctx.beginPath();
-      ctx.arc(x,y,sz*3.5,0,Math.PI*2);
-      ctx.fill();
-    }
-  }
-  
-  const stars=calcStars(loc.lat,loc.lon,date,w,h,cx,cy,radius);
-  
-  const inBounds=(x,y)=>{
-    if(state.shape==='circle'){
-      const dx=x-cx;
-      const dy=y-cy;
-      return dx*dx+dy*dy<=radius*radius;
-    }
-    return x>=0&&x<=w&&y>=0&&y<=h;
-  };
-  
-  const vis=stars.filter(s=>inBounds(s.x,s.y));
-  
-  cons.forEach(pair=>{
-    const s1=stars[pair[0]];
-    const s2=stars[pair[1]];
-    if(s1&&s2&&vis.includes(s1)&&vis.includes(s2)){
-      ctx.strokeStyle='rgba(200,220,255,0.65)';
-      ctx.lineWidth=2.2;
-      ctx.beginPath();
-      ctx.moveTo(s1.x,s1.y);
-      ctx.lineTo(s2.x,s2.y);
-      ctx.stroke();
-    }
-  });
-  
-  stars.forEach(s=>{
-    if(inBounds(s.x,s.y)){
-      const sz=Math.max(3.5,10-s.mag*2.8);
-      const halo=sz*4;
-      
-      const sg=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,halo);
-      sg.addColorStop(0,'rgba(255,255,255,1)');
-      sg.addColorStop(.12,'rgba(245,250,255,0.85)');
-      sg.addColorStop(.35,'rgba(210,225,255,0.4)');
-      sg.addColorStop(1,'rgba(190,210,245,0)');
-      ctx.fillStyle=sg;
-      ctx.beginPath();
-      ctx.arc(s.x,s.y,halo,0,Math.PI*2);
-      ctx.fill();
-      
-      ctx.fillStyle='#FFF';
-      ctx.shadowBlur=7;
-      ctx.shadowColor='rgba(255,255,255,0.95)';
-      ctx.beginPath();
-      ctx.arc(s.x,s.y,sz,0,Math.PI*2);
-      ctx.fill();
-      ctx.shadowBlur=0;
-      
-      if(s.mag<.6&&s.n){
-        ctx.fillStyle=nightCol.sfg;
-        ctx.font='bold 26px Arial';
-        ctx.textAlign='center';
-        ctx.shadowBlur=4;
-        ctx.shadowColor='rgba(0,0,0,0.8)';
-        ctx.fillText(s.n,s.x,s.y-halo-8);
-        ctx.shadowBlur=0;
-      }
-    }
-  });
-  
-  ctx.restore();
-  drawLabels(ctx,w,h,nightCol);
-}
-
-function calcStars(lat,lon,date,cw,ch,cx,cy,radius){
-  const jd=date.getTime()/86400000+2440587.5;
-  let theta=280.46061837+360.98564736629*(jd-2451545);
-  theta=theta%360;
-  if(theta<0)theta+=360;
-  
-  const lst=(theta+lon)%360/15;
-  const pos=[];
-  
-  const ps=state.shape==='circle'?radius*.85:Math.min(cw,ch*.6)*.38;
-  const centerX=state.shape==='circle'?cx:cw/2;
-  const centerY=state.shape==='circle'?cy:ch*.35;
-  
-  bStars.forEach(s=>{
-    const ha=lst-s.ra;
-    const har=ha*15*Math.PI/180;
-    const decr=s.dec*Math.PI/180;
-    const latr=lat*Math.PI/180;
-    const sinAlt=Math.sin(decr)*Math.sin(latr)+Math.cos(decr)*Math.cos(latr)*Math.cos(har);
-    const alt=Math.asin(sinAlt)*180/Math.PI;
-    
-    if(alt>-10){
-      const altr=alt*Math.PI/180;
-      const cosAz=(Math.sin(decr)-Math.sin(altr)*Math.sin(latr))/(Math.cos(altr)*Math.cos(latr));
-      let az=Math.acos(Math.max(-1,Math.min(1,cosAz)))*180/Math.PI;
-      if(Math.sin(har)>0)az=360-az;
-      
-      const r=ps*(90-alt)/90;
-      const th=az*Math.PI/180;
-      
-      pos.push({
-        x:centerX+r*Math.sin(th),
-        y:centerY-r*Math.cos(th),
-        mag:s.mag,
-        n:s.n
-      });
-    }
-  });
-  
-  return pos;
-}
-
-function drawLabels(ctx,w,h,col){
-  const title=document.getElementById('titleInput').value;
-  const subtitle=document.getElementById('subtitleInput').value;
-  const msg=document.getElementById('messageInput').value;
-  const font=document.getElementById('fontSelect').value;
-  const sizeKey=document.getElementById('fontSizeSelect').value;
-  const sizes=fontSizes[sizeKey];
-  
-  ctx.font=`bold ${sizes.title}px ${font}`;
-  ctx.textAlign='center';
-  ctx.textBaseline='middle';
-  const tw=ctx.measureText(title).width;
-  ctx.fillStyle=col.hw+'15';
-  ctx.fillRect(w/2-tw/2-40,h-340,tw+80,sizes.title+30);
-  ctx.fillStyle=col.hw;
-  ctx.fillText(title,w/2,h-290);
-  
-  ctx.font=`${sizes.subtitle}px ${font}`;
-  const sw=ctx.measureText(subtitle).width;
-  ctx.fillStyle=col.hw+'15';
-  ctx.fillRect(w/2-sw/2-30,h-220,sw+60,sizes.subtitle+35);
-  ctx.fillStyle=col.rd;
-  ctx.fillText(subtitle,w/2,h-185);
-  
-  if(msg){
-    ctx.font=`italic ${sizes.tagline}px Georgia`;
-    const mw=ctx.measureText(msg).width;
-    ctx.fillStyle=col.hw+'10';
-    ctx.fillRect(w/2-mw/2-25,h-130,mw+50,sizes.tagline+25);
-    ctx.fillStyle=col.rd;
-    ctx.fillText(msg,w/2,h-105);
-  }
-  
-  ctx.strokeStyle=col.hw;
-  ctx.lineWidth=6;
-  ctx.strokeRect(40,40,w-80,h-80);
-}
-
-function exportPoster(fmt){
-  const c=document.getElementById('posterCanvas');
-  const l=document.createElement('a');
-  l.download=`poster_${Date.now()}.${fmt}`;
-  l.href=c.toDataURL(`image/${fmt}`,1);
-  l.click();
-}
-
-fetchMapData(state.loc.lat,state.loc.lon);
+scheduleDraw();
 </script>
 </body>
 </html>
+
