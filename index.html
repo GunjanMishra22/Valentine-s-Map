@@ -192,7 +192,7 @@ let state={
   loadAttempts:0
 };
 
-// Updated themes object with 'mk' (Marker Color) and the new Cyberpunk theme
+// Updated themes object with specified Cyberpunk hex codes
 const themes={
   darkmode:{bg:'#0A0A0A',shapeBg:'#141414',st:'#FFFFFF',rd:'#EFEFEF',hw:'#E0E0E0',wt:'#B8B8B8',rl:'#D0D0D0', mk: '#FFFFFF'},
   modern:{bg:'#F8F9FA',shapeBg:'#E8EAED',st:'#D0DAE8',rd:'#A0B0C8',hw:'#607080',wt:'#B0D5F5',rl:'#8090A0', mk: '#1A2530'},
@@ -201,15 +201,15 @@ const themes={
   neonpink:{bg:'#FFF0F8',shapeBg:'#FFE8F3',st:'#FF1493',rd:'#FF69B4',hw:'#FF1493',wt:'#FFB6D9',rl:'#FF85C1',glow:true, mk: '#8B0046'},
   mintgreen:{bg:'#F0FFF4',shapeBg:'#E8FFF0',st:'#98D8C8',rd:'#6FA896',hw:'#48887B',wt:'#A0E8D8',rl:'#5FBA9F', mk: '#235C4A'},
   cyberpunk:{
-    bg:'#000000', 
-    shapeBg:'#000000', 
-    st:'#FF0000', // Streets: Bright Red
-    rd:'#00FFFF', // Highways (Secondary): Bright Cyan
-    hw:'#00FFFF', // Highways (Main): Bright Cyan
-    wt:'#553355', // Water/Other: Dull Purple
-    rl:'#884488', // Rail: Dull Purple (Lighter)
+    bg:'#000000',      // Canvas Background: Black
+    shapeBg:'#000000', // Shape Background
+    st:'#fb0a26',      // Streets: Red
+    rd:'#46ebeb',      // Secondary Roads: Cyan
+    hw:'#46ebeb',      // Highways: Cyan
+    wt:'#133e7c',      // Water: Background Details
+    rl:'#133e7c',      // Rail: Background Details
     glow:true, 
-    mk:'#FFFFFF'  // Marker: Light
+    mk:'#FFFFFF'       // Marker: Lighter in dark theme
   }
 };
 
@@ -591,17 +591,17 @@ function drawMapPoster(ctx,w,h,col){
       }
     });
     
-    // Draw Location Marker using col.mk instead of col.hw
+    // Draw Location Marker using col.mk
     const g=ctx.createRadialGradient(0,0,8,0,0,38);
     g.addColorStop(0,'#FFFFFF');
-    g.addColorStop(.4,col.mk); // Changed to marker color
+    g.addColorStop(.4,col.mk); 
     g.addColorStop(1,col.bg);
     ctx.fillStyle=g;
     ctx.beginPath();
     ctx.arc(0,0,38,0,Math.PI*2);
     ctx.fill();
     
-    ctx.fillStyle=col.mk; // Changed to marker color
+    ctx.fillStyle=col.mk; 
     ctx.beginPath();
     ctx.arc(0,0,16,0,Math.PI*2);
     ctx.fill();
