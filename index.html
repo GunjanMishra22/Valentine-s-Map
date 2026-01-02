@@ -31,10 +31,15 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 .export-btn.secondary{background:#6c757d;color:#fff}
 .canvas-container{background:#fff;border-radius:16px;padding:30px;box-shadow:0 2px 12px rgba(0,0,0,.08);display:flex;justify-content:center;align-items:center;position:relative}
 #posterCanvas{max-width:100%;height:auto;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
-.loading-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.95);display:none;align-items:center;justify-content:center;border-radius:16px;z-index:10}
+.loading-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:none;align-items:center;justify-content:center;border-radius:16px;z-index:10}
 .loading-overlay.show{display:flex}
-.spinner{width:60px;height:60px;border:4px solid #e0e0e0;border-top-color:#667eea;border-radius:50%;animation:spin 1s linear infinite}
+.spinner{width:80px;height:80px;position:relative}
+.spinner::before,.spinner::after{content:'';position:absolute;border-radius:50%}
+.spinner::before{width:100%;height:100%;border:5px solid rgba(255,255,255,.2);box-sizing:border-box}
+.spinner::after{width:100%;height:100%;border:5px solid transparent;border-top-color:#fff;border-right-color:#fff;box-sizing:border-box;animation:spin 1.2s cubic-bezier(.5,0,.5,1) infinite}
+.loading-text{color:#fff;font-size:18px;font-weight:600;margin-top:30px;animation:pulse 1.5s ease-in-out infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
 .error-msg{background:#fee;color:#c33;padding:12px;border-radius:8px;margin-top:12px;font-size:13px;display:none}
 .error-msg.show{display:block}
 @media(max-width:1200px){.grid{grid-template-columns:1fr}}
@@ -159,7 +164,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 <div class="loading-overlay" id="loadingOverlay">
 <div style="text-align:center">
 <div class="spinner"></div>
-<p style="margin-top:20px;color:#667eea;font-weight:600">Loading map data...</p>
+<p class="loading-text">🗺️ Loading map data...</p>
 </div>
 </div>
 <canvas id="posterCanvas" width="2480" height="3508"></canvas>
@@ -171,7 +176,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 const bStars=[{n:'Sirius',ra:6.75,dec:-16.72,mag:-1.46},{n:'Canopus',ra:6.4,dec:-52.7,mag:-.72},{n:'Arcturus',ra:14.26,dec:19.18,mag:-.05},{n:'Vega',ra:18.62,dec:38.78,mag:.03},{n:'Capella',ra:5.28,dec:45.99,mag:.08},{n:'Rigel',ra:5.24,dec:-8.2,mag:.12},{n:'Procyon',ra:7.66,dec:5.23,mag:.38},{n:'Betelgeuse',ra:5.92,dec:7.41,mag:.5},{n:'Altair',ra:19.85,dec:8.87,mag:.77},{n:'Aldebaran',ra:4.6,dec:16.51,mag:.85},{n:'Spica',ra:13.42,dec:-11.16,mag:.98},{n:'Antares',ra:16.49,dec:-26.43,mag:1.06},{n:'Pollux',ra:7.76,dec:28.03,mag:1.14},{n:'Deneb',ra:20.69,dec:45.28,mag:1.25}];
 const cons=[[0,6],[0,7],[2,10],[3,8],[4,12],[6,7],[8,13]];
 
-let locTimeout,fetchTimeout,drawTimeout;
+let locTimeout,fetchTimeout,drawTimeout,mapFetchTimeout;
 
 let state={
   posterType:'map',
@@ -187,11 +192,11 @@ let state={
 };
 
 const themes={
-  darkmode:{bg:'#0A0A0A',shapeBg:'#141414',st:'#2A2A2A',rd:'#404040',hw:'#606060',wt:'#1A1A1A',rl:'#353535'},
+  darkmode:{bg:'#0A0A0A',shapeBg:'#141414',st:'#FFFFFF',rd:'#EFEFEF',hw:'#E0E0E0',wt:'#B8B8B8',rl:'#D0D0D0'},
   modern:{bg:'#F8F9FA',shapeBg:'#E8EAED',st:'#D0DAE8',rd:'#A0B0C8',hw:'#607080',wt:'#B0D5F5',rl:'#8090A0'},
   vintage:{bg:'#F4E8D8',shapeBg:'#EAE0D0',st:'#DCD0B8',rd:'#B8A888',hw:'#8B7D67',wt:'#C0D0E0',rl:'#A0906E'},
   strangerthings:{bg:'#0A0A0A',shapeBg:'#141414',st:'#FF1744',rd:'#FF4569',hw:'#FF0033',wt:'#8B0000',rl:'#CC0022',glow:true},
-  neonpink:{bg:'#1A0F1F',shapeBg:'#2A1F2F',st:'#FF1493',rd:'#FF69B4',hw:'#FF85C1',wt:'#8B0066',rl:'#C71585',glow:true},
+  neonpink:{bg:'#FFF0F8',shapeBg:'#FFE8F3',st:'#FF1493',rd:'#FF69B4',hw:'#FF1493',wt:'#FFB6D9',rl:'#FF85C1',glow:true},
   mintgreen:{bg:'#F0FFF4',shapeBg:'#E8FFF0',st:'#98D8C8',rd:'#6FA896',hw:'#48887B',wt:'#A0E8D8',rl:'#5FBA9F'}
 };
 
@@ -224,6 +229,11 @@ function hideError(){
 
 async function fetchMapData(lat,lon,retry=false){
   if(state.isLoading&&!retry)return;
+  
+  if(state.mapData&&state.mapData.lat===lat&&state.mapData.lon===lon&&Math.abs(state.mapData.zoom-state.zoom)<0.05){
+    drawPoster();
+    return;
+  }
   
   state.isLoading=true;
   showLoading();
@@ -261,6 +271,7 @@ async function fetchMapData(lat,lon,retry=false){
     state.mapData={
       lat:lat,
       lon:lon,
+      zoom:state.zoom,
       elements:simplified
     };
     
@@ -278,7 +289,7 @@ async function fetchMapData(lat,lon,retry=false){
     showError('Unable to load map data. Using simplified view. Click retry to try again.');
     
     if(!state.mapData){
-      state.mapData={lat:lat,lon:lon,elements:[]};
+      state.mapData={lat:lat,lon:lon,zoom:state.zoom,elements:[]};
     }
   }finally{
     state.isLoading=false;
@@ -298,9 +309,16 @@ function updateZoom(){
   const val=parseFloat(document.getElementById('zoomInput').value);
   state.zoom=val;
   document.getElementById('zoomValue').textContent=val.toFixed(1);
-  if(state.loc&&!state.isLoading){
-    fetchMapData(state.loc.lat,state.loc.lon);
-  }
+  debouncedMapFetch();
+}
+
+function debouncedMapFetch(){
+  clearTimeout(mapFetchTimeout);
+  mapFetchTimeout=setTimeout(()=>{
+    if(state.loc&&!state.isLoading){
+      fetchMapData(state.loc.lat,state.loc.lon);
+    }
+  },800);
 }
 
 function useMyLocation(){
@@ -427,18 +445,19 @@ function setPosterType(t){
     mapControls.style.display='none';
     themePanel.style.display='none';
     shapePanel.style.display='block';
+    drawPoster();
   }else if(t==='map'){
     starControls.style.display='none';
     mapControls.style.display='block';
     themePanel.style.display='block';
     shapePanel.style.display='none';
     state.shape='full';
-    if(state.loc){
+    if(state.loc&&!state.mapData){
       fetchMapData(state.loc.lat,state.loc.lon);
+    }else{
+      drawPoster();
     }
   }
-  
-  drawPoster();
 }
 
 function setShape(s){
