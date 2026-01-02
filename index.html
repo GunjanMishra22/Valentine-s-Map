@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Premium Poster Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600;700&family=Raleway:wght@300;400;600;700&family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
@@ -20,8 +21,8 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 .btn.active{border-color:#667eea;background:linear-gradient(135deg,#667eea15,#764ba215);color:#667eea;font-weight:600}
 .form-group{margin-bottom:18px}
 .form-group label{display:block;font-size:14px;font-weight:600;margin-bottom:10px;color:#495057}
-.form-group input{width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:10px;font-size:14px;transition:all .3s}
-.form-group input:focus{outline:0;border-color:#667eea;box-shadow:0 0 0 4px rgba(102,126,234,.1)}
+.form-group input,.form-group select{width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:10px;font-size:14px;transition:all .3s}
+.form-group input:focus,.form-group select:focus{outline:0;border-color:#667eea;box-shadow:0 0 0 4px rgba(102,126,234,.1)}
 .theme-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .export-btn{width:100%;padding:16px;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;transition:all .3s}
 .export-btn.primary{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff}
@@ -100,8 +101,28 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 <label>Tagline</label>
 <input type="text" id="messageInput" placeholder="Optional..." oninput="drawPoster()">
 </div>
+<div class="form-group">
+<label>Font Family</label>
+<select id="fontSelect" onchange="drawPoster()">
+<option value="Poppins">Poppins</option>
+<option value="Playfair Display">Playfair Display</option>
+<option value="Montserrat">Montserrat</option>
+<option value="Raleway">Raleway</option>
+<option value="Bebas Neue">Bebas Neue</option>
+<option value="Lato">Lato</option>
+</select>
 </div>
-<div class="panel">
+<div class="form-group">
+<label>Font Size</label>
+<select id="fontSizeSelect" onchange="drawPoster()">
+<option value="small">Small</option>
+<option value="medium" selected>Medium</option>
+<option value="large">Large</option>
+<option value="xlarge">Extra Large</option>
+</select>
+</div>
+</div>
+<div class="panel" id="themePanel">
 <h2>🎨 Theme</h2>
 <div class="theme-grid">
 <button class="btn active" onclick="setTheme('classic')" id="theme-classic">Classic</button>
@@ -135,126 +156,201 @@ let state={
   shape:'full',
   zoom:1.2,
   loc:{lat:40.7128,lon:-74.006,name:'New York'},
-  mapData:null
+  mapData:null,
+  isLoading:false
 };
 
 const themes={
-  classic:{bg:'#FFF',shapeBg:'#F5F5F5',st:'#E8E8E8',rd:'#B8B8B8',hw:'#888',wt:'#C8DCE8',rl:'#AAA',sbg:'#0B1620',sfg:'#FFF'},
-  modern:{bg:'#F8F9FA',shapeBg:'#E8EAED',st:'#D8DFE8',rd:'#A8B5C8',hw:'#6A7588',wt:'#B5D9F8',rl:'#8B9AA0',sbg:'#0D1B2A',sfg:'#E8F0FF'},
-  vintage:{bg:'#F4E8D8',shapeBg:'#EAE0D0',st:'#E0D4BC',rd:'#C0B096',hw:'#8B7D67',wt:'#C8D8E8',rl:'#A89375',sbg:'#1A1410',sfg:'#F5E6D3'},
-  strangerthings:{bg:'#0A0A0A',shapeBg:'#141414',st:'#FF1744',rd:'#FF4569',hw:'#FF0033',wt:'#8B0000',rl:'#CC0022',sbg:'#000000',sfg:'#FF1744',glow:true},
-  nightsky:{bg:'#0A1128',shapeBg:'#15203A',st:'#3A4A6C',rd:'#5D7090',hw:'#7C8BC0',wt:'#2A4A6C',rl:'#6A7A9C',sbg:'#050A15',sfg:'#E8F0FF'},
-  cyberpunk:{bg:'#0D0221',shapeBg:'#1A0D35',st:'#3D2B5E',rd:'#6A4D8E',hw:'#0FF',wt:'#2A1D4E',rl:'#F06',sbg:'#000510',sfg:'#0FF'}
+  classic:{bg:'#FFF',shapeBg:'#F5F5F5',st:'#E0E0E0',rd:'#B0B0B0',hw:'#808080',wt:'#C0D8E8',rl:'#A0A0A0'},
+  modern:{bg:'#F8F9FA',shapeBg:'#E8EAED',st:'#D0DAE8',rd:'#A0B0C8',hw:'#607080',wt:'#B0D5F5',rl:'#8090A0'},
+  vintage:{bg:'#F4E8D8',shapeBg:'#EAE0D0',st:'#DCD0B8',rd:'#B8A888',hw:'#8B7D67',wt:'#C0D0E0',rl:'#A0906E'},
+  strangerthings:{bg:'#0A0A0A',shapeBg:'#141414',st:'#FF1744',rd:'#FF4569',hw:'#FF0033',wt:'#8B0000',rl:'#CC0022',glow:true},
+  nightsky:{bg:'#0A1128',shapeBg:'#15203A',st:'#3A4A6C',rd:'#5D7090',hw:'#7C8BC0',wt:'#2A4A6C',rl:'#6A7A9C'},
+  cyberpunk:{bg:'#0D0221',shapeBg:'#1A0D35',st:'#3D2B5E',rd:'#6A4D8E',hw:'#0FF',wt:'#2A1D4E',rl:'#F06'}
 };
 
-let locTimeout;
+const fontSizes={
+  small:{title:56,subtitle:28,tagline:22},
+  medium:{title:72,subtitle:36,tagline:28},
+  large:{title:90,subtitle:45,tagline:34},
+  xlarge:{title:110,subtitle:55,tagline:40}
+};
+
+let locTimeout,fetchTimeout;
 
 async function fetchMapData(lat,lon){
+  if(state.isLoading)return;
+  state.isLoading=true;
+  
+  clearTimeout(fetchTimeout);
+  
   try{
-    const r=state.zoom*.054,
-          b=`${lat-r},${lon-r},${lat+r},${lon+r}`,
-          q=`[out:json][timeout:30];(way["highway"](${b});way["waterway"](${b});way["railway"](${b}););out geom;`,
-          res=await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`),
-          d=await res.json();
-    state.mapData={lat,lon,elements:d.elements.filter(e=>e.geometry&&e.geometry.length>1)};
-    drawPoster();
+    const r=state.zoom*.054;
+    const b=`${lat-r},${lon-r},${lat+r},${lon+r}`;
+    const q=`[out:json][timeout:25];(way["highway"](${b});way["waterway"](${b});way["railway"](${b}););out geom;`;
+    
+    const controller=new AbortController();
+    fetchTimeout=setTimeout(()=>controller.abort(),25000);
+    
+    const res=await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`,{
+      signal:controller.signal
+    });
+    const d=await res.json();
+    
+    state.mapData={
+      lat:lat,
+      lon:lon,
+      elements:d.elements.filter(e=>e.geometry&&e.geometry.length>1)
+    };
   }catch(e){
+    console.log('Map fetch error:',e.message);
+    if(!state.mapData){
+      state.mapData={lat:lat,lon:lon,elements:[]};
+    }
+  }finally{
+    state.isLoading=false;
     drawPoster();
   }
 }
 
 function updateZoom(){
-  state.zoom=parseFloat(document.getElementById('zoomInput').value);
-  document.getElementById('zoomValue').textContent=state.zoom.toFixed(1);
-  if(state.loc)fetchMapData(state.loc.lat,state.loc.lon);
+  const val=parseFloat(document.getElementById('zoomInput').value);
+  state.zoom=val;
+  document.getElementById('zoomValue').textContent=val.toFixed(1);
+  if(state.loc&&!state.isLoading){
+    fetchMapData(state.loc.lat,state.loc.lon);
+  }
 }
 
 function useMyLocation(){
   const btn=document.getElementById('gpsBtn');
-  if(!btn)return;
+  if(!btn||btn.disabled)return;
+  
   btn.disabled=true;
   btn.textContent='📍 Getting...';
+  
   if(!navigator.geolocation){
-    alert('GPS not supported');
+    alert('GPS not supported by your browser');
     btn.disabled=false;
     btn.textContent='📍 Use My GPS';
     return;
   }
-  navigator.geolocation.getCurrentPosition(function(p){
-    const lat=p.coords.latitude,lon=p.coords.longitude;
-    btn.textContent='✅ Found!';
-    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
-      .then(r=>r.json())
-      .then(d=>{
-        const n=d.address.city||d.address.town||d.address.village||'Your Location';
-        state.loc={lat,lon,name:n};
-        document.getElementById('locationDisplayText').innerHTML=`<strong>${n}</strong><br>${lat.toFixed(4)}°, ${lon.toFixed(4)}°`;
-        document.getElementById('currentLocationDisplay').style.display='block';
-        document.getElementById('titleInput').value=n.toUpperCase();
-        document.getElementById('subtitleInput').value=`${lat.toFixed(4)}° ${lat>0?'N':'S'}, ${Math.abs(lon).toFixed(4)}° ${lon>0?'E':'W'}`;
-        fetchMapData(lat,lon);
-      }).catch(e=>{
-        state.loc={lat,lon,name:'Your Location'};
-        fetchMapData(lat,lon);
-      });
-    setTimeout(()=>{
+  
+  navigator.geolocation.getCurrentPosition(
+    function(p){
+      const lat=p.coords.latitude;
+      const lon=p.coords.longitude;
+      
+      btn.textContent='✅ Location Found';
+      
+      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
+        .then(r=>r.json())
+        .then(d=>{
+          const n=d.address.city||d.address.town||d.address.village||d.address.county||'Your Location';
+          updateLocationState(lat,lon,n);
+          btn.disabled=false;
+          btn.textContent='📍 Use My GPS';
+        })
+        .catch(e=>{
+          updateLocationState(lat,lon,'Your Location');
+          btn.disabled=false;
+          btn.textContent='📍 Use My GPS';
+        });
+    },
+    function(err){
       btn.disabled=false;
       btn.textContent='📍 Use My GPS';
-    },3000);
-  },e=>{
-    btn.disabled=false;
-    btn.textContent='📍 Use My GPS';
-    alert('Location error');
-  },{enableHighAccuracy:true,timeout:10000});
+      alert('Could not access location: '+err.message);
+    },
+    {enableHighAccuracy:true,timeout:10000,maximumAge:0}
+  );
+}
+
+function updateLocationState(lat,lon,name){
+  state.loc={lat:lat,lon:lon,name:name};
+  
+  document.getElementById('locationDisplayText').innerHTML=
+    `<strong>${name}</strong><br>${lat.toFixed(4)}°, ${lon.toFixed(4)}°`;
+  document.getElementById('currentLocationDisplay').style.display='block';
+  document.getElementById('titleInput').value=name.toUpperCase();
+  document.getElementById('subtitleInput').value=
+    `${lat.toFixed(4)}° ${lat>=0?'N':'S'}, ${Math.abs(lon).toFixed(4)}° ${lon>=0?'E':'W'}`;
+  
+  fetchMapData(lat,lon);
 }
 
 async function handleLocationInput(){
   const q=document.getElementById('locationSearch').value.trim();
+  const sugg=document.getElementById('locationSuggestions');
+  
   if(q.length<3){
-    document.getElementById('locationSuggestions').style.display='none';
+    sugg.style.display='none';
     return;
   }
+  
   clearTimeout(locTimeout);
   locTimeout=setTimeout(async()=>{
     try{
-      const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=6`),
-            res=await r.json();
+      const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=6`);
+      const res=await r.json();
+      
       if(res.length>0){
-        const c=document.getElementById('locationSuggestions');
-        c.innerHTML='';
-        c.style.display='block';
-        res.forEach(r=>{
+        sugg.innerHTML='';
+        sugg.style.display='block';
+        
+        res.forEach(item=>{
           const d=document.createElement('div');
           d.style.padding='14px';
           d.style.cursor='pointer';
           d.style.borderBottom='1px solid #f0f0f0';
           d.style.fontSize='13px';
-          d.textContent=r.display_name;
+          d.textContent=item.display_name;
           d.onmouseover=()=>d.style.background='#f8f9fa';
           d.onmouseout=()=>d.style.background='white';
           d.onclick=()=>{
-            state.loc={lat:parseFloat(r.lat),lon:parseFloat(r.lon),name:r.display_name.split(',')[0]};
-            document.getElementById('locationSearch').value=r.display_name;
-            c.style.display='none';
-            document.getElementById('locationDisplayText').innerHTML=`<strong>${state.loc.name}</strong><br>${state.loc.lat.toFixed(4)}°, ${state.loc.lon.toFixed(4)}°`;
-            document.getElementById('currentLocationDisplay').style.display='block';
-            document.getElementById('titleInput').value=state.loc.name.toUpperCase();
-            document.getElementById('subtitleInput').value=`${state.loc.lat.toFixed(4)}°, ${state.loc.lon.toFixed(4)}°`;
-            fetchMapData(state.loc.lat,state.loc.lon);
+            const lat=parseFloat(item.lat);
+            const lon=parseFloat(item.lon);
+            const name=item.display_name.split(',')[0];
+            
+            document.getElementById('locationSearch').value=item.display_name;
+            sugg.style.display='none';
+            
+            updateLocationState(lat,lon,name);
           };
-          c.appendChild(d);
+          sugg.appendChild(d);
         });
       }
-    }catch(e){}
+    }catch(e){
+      console.log('Location search error:',e.message);
+    }
   },400);
 }
 
 function setPosterType(t){
   state.posterType=t;
+  
   document.querySelectorAll('.btn-group .btn').forEach(b=>b.classList.remove('active'));
   document.getElementById(`btn-${t}`).classList.add('active');
-  document.getElementById('starControls').style.display=t==='star'?'block':'none';
-  document.getElementById('mapControls').style.display=t==='map'?'block':'none';
+  
+  const starControls=document.getElementById('starControls');
+  const mapControls=document.getElementById('mapControls');
+  const themePanel=document.getElementById('themePanel');
+  
+  if(t==='star'){
+    starControls.style.display='block';
+    mapControls.style.display='none';
+    themePanel.style.display='none';
+    state.theme='nightsky';
+  }else if(t==='map'){
+    starControls.style.display='none';
+    mapControls.style.display='block';
+    themePanel.style.display='block';
+  }else{
+    starControls.style.display='none';
+    mapControls.style.display='none';
+    themePanel.style.display='block';
+  }
+  
   drawPoster();
 }
 
@@ -273,127 +369,117 @@ function setTheme(t){
 }
 
 function drawPoster(){
-  const c=document.getElementById('posterCanvas'),
-        ctx=c.getContext('2d'),
-        w=c.width,
-        h=c.height,
-        col=themes[state.theme];
+  const c=document.getElementById('posterCanvas');
+  const ctx=c.getContext('2d');
+  const w=c.width;
+  const h=c.height;
+  const col=themes[state.theme];
   
   ctx.fillStyle=col.bg;
   ctx.fillRect(0,0,w,h);
   
-  if(state.posterType==='map')drawMapPoster(ctx,w,h,col);
-  else if(state.posterType==='star')drawStarPoster(ctx,w,h,col);
-  else drawTypoPoster(ctx,w,h,col);
-}
-
-function createMask(ctx,w,h){
-  const cx=w/2,cy=h*.4,sz=Math.min(w,h*.6)*.42;
-  if(state.shape==='circle'){
-    ctx.beginPath();
-    ctx.arc(cx,cy,sz,0,Math.PI*2);
-    ctx.closePath();
+  if(state.posterType==='map'){
+    drawMapPoster(ctx,w,h,col);
+  }else if(state.posterType==='star'){
+    drawStarPoster(ctx,w,h,col);
+  }else{
+    drawTypoPoster(ctx,w,h,col);
   }
 }
 
 function drawMapPoster(ctx,w,h,col){
-  const cx=w/2,cy=h*.4;
+  const cx=w/2;
+  const cy=h*.4;
+  const radius=Math.min(w,h*.6)*.42;
   
-  if(state.shape!=='full'){
+  if(state.shape==='circle'){
     ctx.fillStyle=col.shapeBg;
     ctx.beginPath();
-    ctx.arc(cx,cy,Math.min(w,h*.6)*.42,0,Math.PI*2);
+    ctx.arc(cx,cy,radius,0,Math.PI*2);
     ctx.fill();
   }
   
   ctx.save();
-  if(state.shape!=='full'){
+  
+  if(state.shape==='circle'){
     ctx.beginPath();
-    ctx.arc(cx,cy,Math.min(w,h*.6)*.42,0,Math.PI*2);
+    ctx.arc(cx,cy,radius,0,Math.PI*2);
     ctx.clip();
   }
   
   if(state.mapData&&state.mapData.elements.length>0){
-    const loc=state.loc,ms=40000*state.zoom;
+    const loc=state.loc;
+    const ms=40000*state.zoom;
+    
     ctx.translate(cx,cy);
     
     const layers=[
-      {tag:'waterway',color:col.wt,width:3},
-      {tag:'railway',color:col.rl,width:2.2},
-      {tag:'highway',types:['residential','unclassified','service'],color:col.st,width:1.8},
-      {tag:'highway',types:['tertiary','secondary','primary'],color:col.rd,width:2.8},
-      {tag:'highway',types:['trunk','motorway'],color:col.hw,width:4}
+      {tag:'waterway',color:col.wt,width:3.2,alpha:0.75},
+      {tag:'railway',color:col.rl,width:2.4},
+      {tag:'highway',types:['footway','path','pedestrian'],color:col.st,width:1.2},
+      {tag:'highway',types:['residential','unclassified','service'],color:col.st,width:2},
+      {tag:'highway',types:['tertiary','secondary','primary'],color:col.rd,width:3.2},
+      {tag:'highway',types:['trunk','motorway','trunk_link','motorway_link'],color:col.hw,width:4.5}
     ];
     
     layers.forEach(layer=>{
       state.mapData.elements.forEach(e=>{
         if(!e.geometry||e.geometry.length<2||!e.tags)return;
         
-        if(layer.tag==='highway'&&e.tags.highway){
-          if(layer.types&&!layer.types.includes(e.tags.highway))return;
-          
+        const isMatch=layer.tag==='highway'?
+          (e.tags.highway&&(!layer.types||layer.types.includes(e.tags.highway))):
+          e.tags[layer.tag];
+        
+        if(isMatch){
           ctx.strokeStyle=layer.color;
           ctx.lineWidth=layer.width;
           ctx.lineCap='round';
           ctx.lineJoin='round';
+          ctx.globalAlpha=layer.alpha||1;
           
           if(col.glow){
-            ctx.shadowBlur=8;
+            ctx.shadowBlur=10;
             ctx.shadowColor=layer.color;
           }
           
           ctx.beginPath();
-          e.geometry.forEach((c,i)=>{
-            const x=(c.lon-loc.lon)*ms*Math.cos(loc.lat*Math.PI/180),
-                  y=-(c.lat-loc.lat)*ms;
-            i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+          let started=false;
+          e.geometry.forEach(c=>{
+            const x=(c.lon-loc.lon)*ms*Math.cos(loc.lat*Math.PI/180);
+            const y=-(c.lat-loc.lat)*ms;
+            if(!started){
+              ctx.moveTo(x,y);
+              started=true;
+            }else{
+              ctx.lineTo(x,y);
+            }
           });
           ctx.stroke();
+          
           ctx.shadowBlur=0;
-        }else if(e.tags[layer.tag]){
-          ctx.strokeStyle=layer.color;
-          ctx.lineWidth=layer.width;
-          ctx.lineCap='round';
-          ctx.lineJoin='round';
-          
-          if(layer.tag==='waterway')ctx.globalAlpha=.7;
-          
-          if(col.glow){
-            ctx.shadowBlur=6;
-            ctx.shadowColor=layer.color;
-          }
-          
-          ctx.beginPath();
-          e.geometry.forEach((c,i)=>{
-            const x=(c.lon-loc.lon)*ms*Math.cos(loc.lat*Math.PI/180),
-                  y=-(c.lat-loc.lat)*ms;
-            i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-          });
-          ctx.stroke();
           ctx.globalAlpha=1;
-          ctx.shadowBlur=0;
         }
       });
     });
     
-    const g=ctx.createRadialGradient(0,0,10,0,0,35);
-    g.addColorStop(0,'#FFF');
-    g.addColorStop(.5,col.hw);
-    g.addColorStop(1,state.shape==='full'?col.bg:col.shapeBg);
+    const g=ctx.createRadialGradient(0,0,8,0,0,38);
+    g.addColorStop(0,'#FFFFFF');
+    g.addColorStop(.4,col.hw);
+    g.addColorStop(1,state.shape==='circle'?col.shapeBg:col.bg);
     ctx.fillStyle=g;
     ctx.beginPath();
-    ctx.arc(0,0,35,0,Math.PI*2);
+    ctx.arc(0,0,38,0,Math.PI*2);
     ctx.fill();
     
     ctx.fillStyle=col.hw;
     ctx.beginPath();
-    ctx.arc(0,0,15,0,Math.PI*2);
+    ctx.arc(0,0,16,0,Math.PI*2);
     ctx.fill();
   }else{
     ctx.fillStyle=col.hw;
     ctx.textAlign='center';
-    ctx.font='bold 38px Arial';
-    ctx.fillText('Loading...',cx,cy);
+    ctx.font='bold 40px Arial';
+    ctx.fillText(state.isLoading?'Loading map...':'No map data',0,0);
   }
   
   ctx.restore();
@@ -401,48 +487,67 @@ function drawMapPoster(ctx,w,h,col){
 }
 
 function drawStarPoster(ctx,w,h,col){
-  const loc=state.loc,
-        date=new Date(`${document.getElementById('dateInput').value}T${document.getElementById('timeInput').value}:00`),
-        cx=w/2,cy=h*.4;
+  const nightCol={bg:'#0A1128',shapeBg:'#15203A',sbg:'#050A15',sfg:'#E8F0FF'};
   
-  if(state.shape!=='full'){
-    ctx.fillStyle=col.shapeBg;
+  const loc=state.loc;
+  const dateVal=document.getElementById('dateInput').value;
+  const timeVal=document.getElementById('timeInput').value;
+  const date=new Date(`${dateVal}T${timeVal}:00`);
+  const cx=w/2;
+  const cy=h*.4;
+  const radius=Math.min(w,h*.6)*.42;
+  
+  if(state.shape==='circle'){
+    ctx.fillStyle=nightCol.shapeBg;
     ctx.beginPath();
-    ctx.arc(cx,cy,Math.min(w,h*.6)*.42,0,Math.PI*2);
+    ctx.arc(cx,cy,radius,0,Math.PI*2);
     ctx.fill();
   }
   
   ctx.save();
-  if(state.shape!=='full'){
+  
+  if(state.shape==='circle'){
     ctx.beginPath();
-    ctx.arc(cx,cy,Math.min(w,h*.6)*.42,0,Math.PI*2);
+    ctx.arc(cx,cy,radius,0,Math.PI*2);
     ctx.clip();
   }
   
   const g=ctx.createRadialGradient(cx,cy*.6,0,cx,cy*.6,h*.4);
   g.addColorStop(0,'rgba(20,30,60,1)');
-  g.addColorStop(.5,col.sbg);
-  g.addColorStop(1,col.sbg);
+  g.addColorStop(.5,nightCol.sbg);
+  g.addColorStop(1,nightCol.sbg);
   ctx.fillStyle=g;
   ctx.fillRect(0,0,w,h);
   
-  const skyW=state.shape==='full'?w:w*.85,
-        skyH=state.shape==='full'?h*.65:h*.5;
+  const skyW=state.shape==='circle'?w*.85:w;
+  const skyH=state.shape==='circle'?h*.5:h*.65;
   
   for(let i=0;i<3500;i++){
-    const x=cx+(Math.random()-.5)*skyW,
-          y=cy*.5+(Math.random()-.5)*skyH,
-          tier=Math.random();
+    const x=cx+(Math.random()-.5)*skyW;
+    const y=cy*.5+(Math.random()-.5)*skyH;
+    const tier=Math.random();
     let sz,alpha;
-    if(tier<.02){sz=1.2+Math.random()*.8;alpha=.95}
-    else if(tier<.08){sz=.8+Math.random()*.6;alpha=.8}
-    else if(tier<.2){sz=.5+Math.random()*.5;alpha=.6}
-    else{sz=.3+Math.random()*.4;alpha=.35}
+    
+    if(tier<.02){
+      sz=1.2+Math.random()*.8;
+      alpha=.95;
+    }else if(tier<.08){
+      sz=.8+Math.random()*.6;
+      alpha=.8;
+    }else if(tier<.2){
+      sz=.5+Math.random()*.5;
+      alpha=.6;
+    }else{
+      sz=.3+Math.random()*.4;
+      alpha=.35;
+    }
+    
     const tw=.85+Math.sin(Date.now()*.002+i)*.15;
     ctx.fillStyle=`rgba(255,255,255,${alpha*tw})`;
     ctx.beginPath();
     ctx.arc(x,y,sz,0,Math.PI*2);
     ctx.fill();
+    
     if(tier<.015){
       ctx.fillStyle=`rgba(255,255,255,${alpha*.3})`;
       ctx.beginPath();
@@ -452,10 +557,14 @@ function drawStarPoster(ctx,w,h,col){
   }
   
   const stars=calcStars(loc.lat,loc.lon,date,w,h);
-  const vis=stars.filter(s=>s.x>=cx-skyW/2&&s.x<=cx+skyW/2&&s.y>=cy*.5-skyH/2&&s.y<=cy*.5+skyH/2);
+  const vis=stars.filter(s=>
+    s.x>=cx-skyW/2&&s.x<=cx+skyW/2&&
+    s.y>=cy*.5-skyH/2&&s.y<=cy*.5+skyH/2
+  );
   
   cons.forEach(pair=>{
-    const s1=stars[pair[0]],s2=stars[pair[1]];
+    const s1=stars[pair[0]];
+    const s2=stars[pair[1]];
     if(s1&&s2&&vis.includes(s1)&&vis.includes(s2)){
       ctx.strokeStyle='rgba(180,200,255,0.25)';
       ctx.lineWidth=1.5;
@@ -470,15 +579,17 @@ function drawStarPoster(ctx,w,h,col){
     if(s.x>=cx-skyW/2&&s.x<=cx+skyW/2&&s.y>=cy*.5-skyH/2&&s.y<=cy*.5+skyH/2){
       const sz=Math.max(4,12-s.mag*3);
       const halo=sz*5;
-      const g=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,halo);
-      g.addColorStop(0,'rgba(255,255,255,1)');
-      g.addColorStop(.15,'rgba(240,250,255,0.8)');
-      g.addColorStop(.4,'rgba(200,220,255,0.3)');
-      g.addColorStop(1,'rgba(180,200,240,0)');
-      ctx.fillStyle=g;
+      
+      const sg=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,halo);
+      sg.addColorStop(0,'rgba(255,255,255,1)');
+      sg.addColorStop(.15,'rgba(240,250,255,0.8)');
+      sg.addColorStop(.4,'rgba(200,220,255,0.3)');
+      sg.addColorStop(1,'rgba(180,200,240,0)');
+      ctx.fillStyle=sg;
       ctx.beginPath();
       ctx.arc(s.x,s.y,halo,0,Math.PI*2);
       ctx.fill();
+      
       ctx.fillStyle='#FFF';
       ctx.shadowBlur=6;
       ctx.shadowColor='rgba(255,255,255,0.9)';
@@ -486,8 +597,9 @@ function drawStarPoster(ctx,w,h,col){
       ctx.arc(s.x,s.y,sz,0,Math.PI*2);
       ctx.fill();
       ctx.shadowBlur=0;
+      
       if(s.mag<.5&&s.n){
-        ctx.fillStyle=col.sfg;
+        ctx.fillStyle=nightCol.sfg;
         ctx.font='bold 24px Arial';
         ctx.textAlign='center';
         ctx.shadowBlur=3;
@@ -499,7 +611,7 @@ function drawStarPoster(ctx,w,h,col){
   });
   
   ctx.restore();
-  drawLabels(ctx,w,h,col);
+  drawLabels(ctx,w,h,nightCol);
 }
 
 function calcStars(lat,lon,date,cw,ch){
@@ -507,40 +619,55 @@ function calcStars(lat,lon,date,cw,ch){
   let theta=280.46061837+360.98564736629*(jd-2451545);
   theta=theta%360;
   if(theta<0)theta+=360;
-  const lst=(theta+lon)%360/15,pos=[];
+  
+  const lst=(theta+lon)%360/15;
+  const pos=[];
+  
   bStars.forEach(s=>{
-    const ha=lst-s.ra,
-          har=ha*15*Math.PI/180,
-          decr=s.dec*Math.PI/180,
-          latr=lat*Math.PI/180,
-          sinAlt=Math.sin(decr)*Math.sin(latr)+Math.cos(decr)*Math.cos(latr)*Math.cos(har),
-          alt=Math.asin(sinAlt)*180/Math.PI;
+    const ha=lst-s.ra;
+    const har=ha*15*Math.PI/180;
+    const decr=s.dec*Math.PI/180;
+    const latr=lat*Math.PI/180;
+    const sinAlt=Math.sin(decr)*Math.sin(latr)+Math.cos(decr)*Math.cos(latr)*Math.cos(har);
+    const alt=Math.asin(sinAlt)*180/Math.PI;
+    
     if(alt>-5){
-      const altr=alt*Math.PI/180,
-            cosAz=(Math.sin(decr)-Math.sin(altr)*Math.sin(latr))/(Math.cos(altr)*Math.cos(latr));
+      const altr=alt*Math.PI/180;
+      const cosAz=(Math.sin(decr)-Math.sin(altr)*Math.sin(latr))/(Math.cos(altr)*Math.cos(latr));
       let az=Math.acos(Math.max(-1,Math.min(1,cosAz)))*180/Math.PI;
       if(Math.sin(har)>0)az=360-az;
-      const ps=ch*.25,
-            r=ps*(90-alt)/90,
-            th=az*Math.PI/180;
-      pos.push({x:cw/2+r*Math.sin(th),y:ch*.4-r*Math.cos(th),mag:s.mag,n:s.n});
+      
+      const ps=ch*.25;
+      const r=ps*(90-alt)/90;
+      const th=az*Math.PI/180;
+      
+      pos.push({
+        x:cw/2+r*Math.sin(th),
+        y:ch*.4-r*Math.cos(th),
+        mag:s.mag,
+        n:s.n
+      });
     }
   });
+  
   return pos;
 }
 
 function drawTypoPoster(ctx,w,h,col){
-  const title=document.getElementById('titleInput').value,
-        subtitle=document.getElementById('subtitleInput').value;
+  const title=document.getElementById('titleInput').value;
+  const subtitle=document.getElementById('subtitleInput').value;
   
   ctx.strokeStyle=col.hw;
   ctx.lineWidth=2.5;
+  
   for(let i=0;i<9;i++){
     const offs=i*90;
     ctx.strokeRect(100+offs,100+offs,w-200-offs*2,h-200-offs*2);
   }
   
-  ctx.font='bold 180px Arial';
+  const font=document.getElementById('fontSelect').value;
+  
+  ctx.font=`bold 180px ${font}`;
   ctx.textAlign='center';
   ctx.textBaseline='middle';
   const tw=ctx.measureText(title).width;
@@ -549,7 +676,7 @@ function drawTypoPoster(ctx,w,h,col){
   ctx.fillStyle=col.hw;
   ctx.fillText(title,w/2,h/2-80);
   
-  ctx.font='60px Arial';
+  ctx.font=`60px ${font}`;
   const sw=ctx.measureText(subtitle).width;
   ctx.fillStyle=col.hw+'15';
   ctx.fillRect(w/2-sw/2-40,h/2+40,sw+80,100);
@@ -560,31 +687,34 @@ function drawTypoPoster(ctx,w,h,col){
 }
 
 function drawLabels(ctx,w,h,col){
-  const title=document.getElementById('titleInput').value,
-        subtitle=document.getElementById('subtitleInput').value,
-        msg=document.getElementById('messageInput').value;
+  const title=document.getElementById('titleInput').value;
+  const subtitle=document.getElementById('subtitleInput').value;
+  const msg=document.getElementById('messageInput').value;
+  const font=document.getElementById('fontSelect').value;
+  const sizeKey=document.getElementById('fontSizeSelect').value;
+  const sizes=fontSizes[sizeKey];
   
-  ctx.font='bold 72px Arial';
+  ctx.font=`bold ${sizes.title}px ${font}`;
   ctx.textAlign='center';
   ctx.textBaseline='middle';
   const tw=ctx.measureText(title).width;
   ctx.fillStyle=col.hw+'15';
-  ctx.fillRect(w/2-tw/2-40,h-340,tw+80,100);
+  ctx.fillRect(w/2-tw/2-40,h-340,tw+80,sizes.title+30);
   ctx.fillStyle=col.hw;
   ctx.fillText(title,w/2,h-290);
   
-  ctx.font='36px Arial';
+  ctx.font=`${sizes.subtitle}px ${font}`;
   const sw=ctx.measureText(subtitle).width;
   ctx.fillStyle=col.hw+'15';
-  ctx.fillRect(w/2-sw/2-30,h-220,sw+60,70);
+  ctx.fillRect(w/2-sw/2-30,h-220,sw+60,sizes.subtitle+35);
   ctx.fillStyle=col.rd;
   ctx.fillText(subtitle,w/2,h-185);
   
   if(msg){
-    ctx.font='italic 28px Georgia';
+    ctx.font=`italic ${sizes.tagline}px Georgia`;
     const mw=ctx.measureText(msg).width;
     ctx.fillStyle=col.hw+'10';
-    ctx.fillRect(w/2-mw/2-25,h-130,mw+50,50);
+    ctx.fillRect(w/2-mw/2-25,h-130,mw+50,sizes.tagline+25);
     ctx.fillStyle=col.rd;
     ctx.fillText(msg,w/2,h-105);
   }
@@ -595,8 +725,8 @@ function drawLabels(ctx,w,h,col){
 }
 
 function exportPoster(fmt){
-  const c=document.getElementById('posterCanvas'),
-        l=document.createElement('a');
+  const c=document.getElementById('posterCanvas');
+  const l=document.createElement('a');
   l.download=`poster_${Date.now()}.${fmt}`;
   l.href=c.toDataURL(`image/${fmt}`,1);
   l.click();
