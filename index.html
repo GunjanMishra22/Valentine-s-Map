@@ -3,176 +3,117 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Premium Poster Generator</title>
+<title>Premium Poster Generator Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Bebas+Neue&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:wght@300;400;600;700&family=Playfair+Display:wght@400;700;900&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
 <style>
 @font-face{font-family:'ITC Benguiat';src:url('https://cdn.jsdelivr.net/gh/toribiodiego/Stranger-Things@main/ITCBenguiatStd-Bold.woff') format('woff');font-weight:bold;font-style:normal}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;color:#1a202c;overflow-x:hidden}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#e2e8f0;color:#1a202c;overflow-x:hidden}
 .header{background:linear-gradient(135deg,#1a202c 0%,#2d3748 100%);color:#fff;padding:40px 20px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.2)}
-.header h1{font-size:36px;letter-spacing:-1px;margin-bottom:8px}
+.header h1{font-size:32px;letter-spacing:2px;margin-bottom:8px;font-weight:700}
 .container{max-width:1600px;margin:0 auto;padding:40px 20px}
-.grid{display:grid;grid-template-columns:400px 1fr;gap:40px}
-.panel{background:#fff;border-radius:20px;padding:30px;box-shadow:0 10px 25px rgba(0,0,0,.05);margin-bottom:24px;border:1px solid rgba(0,0,0,.05)}
-.panel h2{font-size:18px;margin-bottom:20px;text-transform:uppercase;letter-spacing:1px;color:#4a5568}
-.btn-group{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.btn{padding:15px;border:2px solid #edf2f7;border-radius:12px;background:#fff;cursor:pointer;transition:all .2s cubic-bezier(0.4,0,0.2,1);font-size:13px;font-weight:600}
-.btn:hover{border-color:#cbd5e0;background:#f7fafc}
+.grid{display:grid;grid-template-columns:420px 1fr;gap:40px}
+.panel{background:#fff;border-radius:20px;padding:25px;box-shadow:0 10px 25px rgba(0,0,0,.05);margin-bottom:20px;border:1px solid rgba(0,0,0,.05)}
+.panel h2{font-size:14px;margin-bottom:20px;text-transform:uppercase;letter-spacing:1.5px;color:#718096}
+.btn-group{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.btn{padding:14px;border:2px solid #edf2f7;border-radius:12px;background:#fff;cursor:pointer;transition:all .2s ease;font-size:12px;font-weight:700}
 .btn.active{border-color:#2d3748;background:#2d3748;color:#fff}
-.form-group{margin-bottom:20px}
-.form-group label{display:block;font-size:13px;font-weight:700;margin-bottom:8px;color:#718096}
-.form-group input,.form-group select{width:100%;padding:12px;border:2px solid #edf2f7;border-radius:10px;font-size:14px;outline:none}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:11px;font-weight:800;margin-bottom:8px;color:#a0aec0;text-transform:uppercase}
+.form-group input, .form-group select{width:100%;padding:12px;border:2px solid #edf2f7;border-radius:10px;font-size:14px;outline:none;transition:0.2s}
 .form-group input:focus{border-color:#4a5568}
-.theme-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.export-btn{width:100%;padding:18px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:12px;transition:0.3s}
-.export-btn.primary{background:#2d3748;color:#fff}
-.export-btn.secondary{background:#edf2f7;color:#2d3748}
-.canvas-container{background:#d1d5db;border-radius:24px;padding:40px;display:flex;justify-content:center;align-items:center;min-height:800px;position:sticky;top:20px}
-#posterCanvas{max-width:100%;height:auto;border-radius:4px;box-shadow:0 30px 60px rgba(0,0,0,.3);background:#000}
-.error-msg{background:#fff5f5;color:#c53030;padding:15px;border-radius:10px;margin-top:15px;font-size:13px;display:none;border-left:4px solid #c53030}
-@media(max-width:1200px){.grid{grid-template-columns:1fr}.canvas-container{position:relative}}
+.theme-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.export-btn{width:100%;padding:18px;border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;transition:0.3s;letter-spacing:1px}
+.export-btn.primary{background:#2d3748;color:#fff;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1)}
+.canvas-container{background:#cbd5e0;border-radius:30px;padding:60px;display:flex;justify-content:center;align-items:center;min-height:900px;position:sticky;top:20px}
+#posterCanvas{max-width:100%;height:auto;border-radius:4px;box-shadow:0 40px 100px rgba(0,0,0,0.4);background:#000}
+@media(max-width:1200px){.grid{grid-template-columns:1fr}.canvas-container{position:relative;padding:20px}}
 </style>
 </head>
 <body>
-<div class="header">
-<h1>PREMIUM POSTER STUDIO</h1>
-<p>Bespoke Map & Celestial Artworks</p>
-</div>
+<div class="header"><h1>POSTER STUDIO PRO</h1><p>High-Fidelity Cartography & Celestial Art</p></div>
 <div class="container">
-<div class="grid">
-<div class="controls">
-<div class="panel">
-<h2>Poster Style</h2>
-<div class="btn-group">
-<button class="btn active" onclick="setPosterType('map')" id="btn-map">MAP</button>
-<button class="btn" onclick="setPosterType('star')" id="btn-star">STARS</button>
-</div>
-</div>
-<div class="panel" id="shapePanel" style="display:none">
-<h2>Frame Shape</h2>
-<div class="btn-group">
-<button class="btn active" onclick="setShape('full')" id="btn-full">FULL</button>
-<button class="btn" onclick="setShape('circle')" id="btn-circle">CIRCLE</button>
-</div>
-<div id="circleColorPanel" style="display:none;margin-top:20px">
-<div class="form-group">
-<label>Background Color</label>
-<input type="color" id="circleColorInput" value="#15203A" onchange="updateCircleColor()">
-</div>
-</div>
-</div>
-<div class="panel">
-<h2>Location</h2>
-<button class="export-btn primary" onclick="useMyLocation()" id="gpsBtn">USE CURRENT GPS</button>
-<div class="form-group">
-<label>Search City</label>
-<input type="text" id="locationSearch" placeholder="Search..." oninput="handleLocationInput()">
-<div id="locationSuggestions" style="display:none;position:absolute;z-index:100;width:340px;background:#fff;box-shadow:0 10px 25px rgba(0,0,0,.1);border-radius:10px;max-height:200px;overflow-y:auto"></div>
-</div>
-<div id="mapControls">
-<div class="form-group">
-<label>Zoom Level</label>
-<input type="range" id="zoomInput" min="0.8" max="3" value="1.5" step="0.1" oninput="updateZoom()">
-</div>
-</div>
-<div id="starControls" style="display:none">
-<div class="form-group"><label>Date</label><input type="date" id="dateInput" value="2024-01-01" onchange="drawPoster()"></div>
-<div class="form-group"><label>Time</label><input type="time" id="timeInput" value="20:00" onchange="drawPoster()"></div>
-</div>
-<div id="mapError" class="error-msg"></div>
-</div>
-<div class="panel">
-<h2>Typography</h2>
-<div class="form-group"><label>Main Title</label><input type="text" id="titleInput" value="NEW YORK" oninput="debouncedDraw()"></div>
-<div class="form-group"><label>Subtitle (Coordinates)</label><input type="text" id="subtitleInput" value="40.7128° N, 74.0060° W" oninput="debouncedDraw()"></div>
-<div class="form-group"><label>Tagline</label><input type="text" id="messageInput" placeholder="Optional phrase..." oninput="debouncedDraw()"></div>
-<div class="form-group">
-<label>Font</label>
-<select id="fontSelect" onchange="drawPoster()">
-<option value="Poppins">Poppins</option>
-<option value="Playfair Display">Playfair Display</option>
-<option value="Cinzel">Cinzel</option>
-<option value="Cormorant Garamond">Cormorant Garamond</option>
-<option value="Bebas Neue">Bebas Neue</option>
-<option value="ITC Benguiat">Stranger Things</option>
-</select>
-</div>
-</div>
-<div class="panel" id="themePanel">
-<h2>Themes</h2>
-<div class="theme-grid">
-<button class="btn active" onclick="setTheme('darkmode')" id="theme-darkmode">Dark</button>
-<button class="btn" onclick="setTheme('modern')" id="theme-modern">Modern</button>
-<button class="btn" onclick="setTheme('vintage')" id="theme-vintage">Vintage</button>
-<button class="btn" onclick="setTheme('strangerthings')" id="theme-strangerthings">The Upside Down</button>
-<button class="btn" onclick="setTheme('cyberpunk')" id="theme-cyberpunk">Cyberpunk</button>
-</div>
-</div>
-<div class="panel">
-<button class="export-btn primary" onclick="exportPoster('png')">DOWNLOAD PNG</button>
-</div>
-</div>
-<div class="canvas-container">
-<canvas id="posterCanvas" width="2480" height="3508"></canvas>
-</div>
-</div>
+    <div class="grid">
+        <div class="controls">
+            <div class="panel">
+                <h2>Art Type</h2>
+                <div class="btn-group">
+                    <button class="btn active" onclick="setType('map')" id="btn-map">STREET MAP</button>
+                    <button class="btn" onclick="setType('star')" id="btn-star">STAR CHART</button>
+                </div>
+            </div>
+            <div class="panel">
+                <h2>Frame & Geometry</h2>
+                <div class="btn-group">
+                    <button class="btn active" onclick="setShape('full')" id="btn-full">FULL FRAME</button>
+                    <button class="btn" onclick="setShape('circle')" id="btn-circle">CIRCULAR MASK</button>
+                </div>
+            </div>
+            <div class="panel">
+                <h2>Location & View</h2>
+                <div class="form-group">
+                    <label>Search City</label>
+                    <input type="text" id="locationSearch" placeholder="Enter city name..." oninput="handleLocationInput()">
+                    <div id="locationSuggestions" style="display:none;position:absolute;z-index:100;width:370px;background:#fff;box-shadow:0 10px 25px rgba(0,0,0,0.1);border-radius:10px;overflow:hidden"></div>
+                </div>
+                <div class="form-group">
+                    <label>Zoom Level</label>
+                    <input type="range" id="zoomInput" min="0.8" max="3.5" value="1.5" step="0.1" oninput="updateZoom()">
+                </div>
+                <button class="export-btn primary" onclick="useMyLocation()">LOCATE ME</button>
+            </div>
+            <div class="panel">
+                <h2>Typography</h2>
+                <div class="form-group"><label>Main Heading</label><input type="text" id="titleInput" value="LONDON" oninput="drawPoster()"></div>
+                <div class="form-group"><label>Subtext</label><input type="text" id="subtitleInput" value="51.5074° N, 0.1278° W" oninput="drawPoster()"></div>
+                <div class="form-group"><label>Tagline</label><input type="text" id="messageInput" placeholder="Add a date or phrase..." oninput="drawPoster()"></div>
+                <div class="form-group">
+                    <label>Typography Style</label>
+                    <select id="fontSelect" onchange="drawPoster()">
+                        <option value="Poppins">Poppins (Modern)</option>
+                        <option value="Playfair Display">Playfair (Classic)</option>
+                        <option value="Cinzel">Cinzel (Decorative)</option>
+                        <option value="Bebas Neue">Bebas (Bold)</option>
+                        <option value="ITC Benguiat">Stranger Things</option>
+                    </select>
+                </div>
+            </div>
+            <div class="panel">
+                <h2>Color Palette</h2>
+                <div class="theme-grid">
+                    <button class="btn active" onclick="setTheme('darkmode')" id="theme-darkmode">Midnight</button>
+                    <button class="btn" onclick="setTheme('modern')" id="theme-modern">Gallery White</button>
+                    <button class="btn" onclick="setTheme('vintage')" id="theme-vintage">Heritage</button>
+                    <button class="btn" onclick="setTheme('strangerthings')" id="theme-strangerthings">The Void</button>
+                    <button class="btn" onclick="setTheme('cyberpunk')" id="theme-cyberpunk">Neon City</button>
+                </div>
+            </div>
+            <button class="export-btn primary" onclick="exportPoster()">DOWNLOAD HIGH-RES PNG</button>
+        </div>
+        <div class="canvas-container">
+            <canvas id="posterCanvas" width="2480" height="3508"></canvas>
+        </div>
+    </div>
 </div>
 
 <script>
-// OFF-SCREEN CANVAS FOR SMOOTH RENDERING
 const offCanvas = document.createElement('canvas');
-offCanvas.width = 2480;
-offCanvas.height = 3508;
+offCanvas.width = 2480; offCanvas.height = 3508;
 const offCtx = offCanvas.getContext('2d');
 
-const bStars=[{n:'Sirius',ra:6.75,dec:-16.72,mag:-1.46},{n:'Canopus',ra:6.4,dec:-52.7,mag:-.72},{n:'Arcturus',ra:14.26,dec:19.18,mag:-.05},{n:'Vega',ra:18.62,dec:38.78,mag:.03},{n:'Capella',ra:5.28,dec:45.99,mag:.08},{n:'Rigel',ra:5.24,dec:-8.2,mag:.12},{n:'Procyon',ra:7.66,dec:5.23,mag:.38},{n:'Betelgeuse',ra:5.92,dec:7.41,mag:.5},{n:'Altair',ra:19.85,dec:8.87,mag:.77},{n:'Aldebaran',ra:4.6,dec:16.51,mag:.85},{n:'Spica',ra:13.42,dec:-11.16,mag:.98},{n:'Antares',ra:16.49,dec:-26.43,mag:1.06},{n:'Pollux',ra:7.76,dec:28.03,mag:1.14},{n:'Deneb',ra:20.69,dec:45.28,mag:1.25}];
-const cons=[[0,6],[0,7],[2,10],[3,8],[4,12],[6,7],[8,13]];
-
-let state={
-  posterType:'map',
-  theme:'darkmode',
-  shape:'full',
-  zoom:1.5,
-  loc:{lat:40.7128,lon:-74.006,name:'New York'},
-  mapData:null,
-  isLoading:false,
-  circleColor:'#15203A'
+let state = {
+    type: 'map', theme: 'darkmode', shape: 'full', zoom: 1.5,
+    loc: {lat: 51.5074, lon: -0.1278, name: 'London'},
+    mapData: null
 };
 
-const themes={
-  darkmode:{bg:'#000000',st:'#333333',rd:'#666666',hw:'#FFFFFF',wt:'#1a1a1a',rl:'#222222',mk:'#FFFFFF'},
-  modern:{bg:'#FFFFFF',st:'#E2E8F0',rd:'#CBD5E0',hw:'#2D3748',wt:'#EBF8FF',rl:'#EDF2F7',mk:'#2D3748'},
-  vintage:{bg:'#F4E8D8',st:'#DCD0B8',rd:'#B8A888',hw:'#5D4037',wt:'#C0D0E0',rl:'#A0906E',mk:'#5D4037'},
-  strangerthings:{bg:'#050505',st:'#FF1744',rd:'#B71C1C',hw:'#FF0000',wt:'#1a0000',rl:'#330000',glow:true,mk:'#FFD1D1'},
-  cyberpunk:{bg:'#000000',st:'#fb0a26',rd:'#46ebeb',hw:'#46ebeb',wt:'#0b1e3d',rl:'#0b1e3d',glow:true,mk:'#FFFFFF'}
+const themes = {
+    darkmode: {bg: '#0a0a0a', mask: '#151515', st: '#333', rd: '#555', hw: '#fff', mk: '#fff', accent: '#444'},
+    modern: {bg: '#ffffff', mask: '#f8fafc', st: '#e2e8f0', rd: '#94a3b8', hw: '#1e293b', mk: '#1e293b', accent: '#f1f5f9'},
+    vintage: {bg: '#f4ece1', mask: '#e8dfd0', st: '#d6c8b1', rd: '#a69076', hw: '#4a3728', mk: '#4a3728', accent: '#dfd5c3'},
+    strangerthings: {bg: '#050000', mask: '#120000', st: '#440000', rd: '#e60000', hw: '#ff0000', mk: '#ff0000', glow: true},
+    cyberpunk: {bg: '#020205', mask: '#0a0a1a', st: '#003333', rd: '#00ffff', hw: '#00ffff', mk: '#fff', glow: true}
 };
-
-const fontSizes = { title: 85, subtitle: 42, tagline: 32 };
-
-function updateZoom(){
-    state.zoom = parseFloat(document.getElementById('zoomInput').value);
-    debouncedMapFetch();
-}
-
-let mapFetchTimeout;
-function debouncedMapFetch(){
-    clearTimeout(mapFetchTimeout);
-    mapFetchTimeout = setTimeout(() => fetchMapData(state.loc.lat, state.loc.lon), 500);
-}
-
-async function fetchMapData(lat, lon) {
-    state.isLoading = true;
-    try {
-        const r = state.zoom * 0.035;
-        const b = `${lat - r},${lon - r},${lat + r},${lon + r}`;
-        const q = `[out:json][timeout:25];(way["highway"](${b});way["waterway"](${b});way["railway"](${b}););out geom;`;
-        const res = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`);
-        const d = await res.json();
-        state.mapData = { lat, lon, elements: d.elements };
-        drawPoster();
-    } catch (e) { console.error(e); }
-    state.isLoading = false;
-}
 
 function setTheme(t) {
     state.theme = t;
@@ -181,95 +122,109 @@ function setTheme(t) {
     drawPoster();
 }
 
-function setPosterType(t) {
-    state.posterType = t;
-    document.getElementById('starControls').style.display = t === 'star' ? 'block' : 'none';
-    document.getElementById('mapControls').style.display = t === 'map' ? 'block' : 'none';
-    document.getElementById('shapePanel').style.display = t === 'star' ? 'block' : 'none';
+function setType(t) {
+    state.type = t;
+    document.querySelectorAll('#btn-map, #btn-star').forEach(b => b.classList.remove('active'));
+    document.getElementById(`btn-${t}`).classList.add('active');
     drawPoster();
 }
 
 function setShape(s) {
     state.shape = s;
+    document.querySelectorAll('#btn-full, #btn-circle').forEach(b => b.classList.remove('active'));
+    document.getElementById(`btn-${s}`).classList.add('active');
     drawPoster();
 }
 
-function debouncedDraw() {
-    clearTimeout(this.drawT);
-    this.drawT = setTimeout(drawPoster, 50);
+async function fetchMapData(lat, lon) {
+    const r = state.zoom * 0.035;
+    const q = `[out:json];(way["highway"](${lat-r},${lon-r},${lat+r},${lon+r});way["waterway"](${lat-r},${lon-r},${lat+r},${lon+r}););out geom;`;
+    const res = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`);
+    const d = await res.json();
+    state.mapData = d.elements;
+    drawPoster();
 }
 
 function drawPoster() {
     const mainCanvas = document.getElementById('posterCanvas');
-    const mainCtx = mainCanvas.getContext('2d');
+    const ctx = offCtx;
     const col = themes[state.theme];
+    
+    // 1. Background
+    ctx.fillStyle = col.bg;
+    ctx.fillRect(0, 0, 2480, 3508);
 
-    // DRAW TO OFF-SCREEN CANVAS FIRST (ANTI-FLICKER)
-    offCtx.fillStyle = col.bg;
-    offCtx.fillRect(0, 0, 2480, 3508);
-
-    if (state.posterType === 'map') {
-        renderMap(offCtx, col);
-    } else {
-        renderStars(offCtx);
+    // 2. Main Content Area (With Masking Logic)
+    ctx.save();
+    const centerX = 1240, centerY = 1450, radius = 1000;
+    
+    if (state.shape === 'circle') {
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.fillStyle = col.mask; // Automatic themed mask color
+        ctx.fill();
+        ctx.clip();
     }
 
-    renderLabels(offCtx, col);
+    if (state.type === 'map' && state.mapData) {
+        renderMapContent(ctx, col, centerX, centerY);
+    } else if (state.type === 'star') {
+        renderStarContent(ctx, col, centerX, centerY, radius);
+    }
+    ctx.restore();
 
-    // BORDER
-    offCtx.strokeStyle = col.hw;
-    offCtx.lineWidth = 15;
-    offCtx.strokeRect(60, 60, 2360, 3388);
+    // 3. Frame & Labels
+    renderLabels(ctx, col);
+    
+    // Heavy Border
+    ctx.strokeStyle = col.hw;
+    ctx.lineWidth = 12;
+    ctx.strokeRect(80, 80, 2320, 3348);
 
-    // FLIP TO MAIN CANVAS
-    mainCtx.drawImage(offCanvas, 0, 0);
+    // Flip buffer to screen
+    mainCanvas.getContext('2d').drawImage(offCanvas, 0, 0);
 }
 
-function renderMap(ctx, col) {
-    if (!state.mapData) return;
-    const cx = 1240, cy = 1403; // Centered higher for text room
-    const ms = 40000 * state.zoom;
-    const isCyber = state.theme === 'cyberpunk';
-
-    ctx.save();
-    ctx.translate(cx, cy);
-
-    const layers = [
-        {key:'waterway', c:col.wt, w:5},
-        {key:'railway', c:col.rl, w:3},
-        {key:'highway', c:col.st, w:isCyber ? 8 : 3, glow: isCyber},
-        {key:'highway_main', c:col.rd, w:isCyber ? 12 : 6, glow: col.glow}
-    ];
-
-    layers.forEach(l => {
+function renderMapContent(ctx, col, cx, cy) {
+    const ms = 42000 * state.zoom;
+    ctx.lineCap = 'round';
+    
+    state.mapData.forEach(e => {
+        if(!e.geometry) return;
+        const isMain = e.tags.highway && ['primary','secondary','motorway','trunk'].includes(e.tags.highway);
+        
         ctx.beginPath();
-        state.mapData.elements.forEach(e => {
-            if (!e.geometry || !e.tags) return;
-            const isMain = ['primary','secondary','tertiary','trunk','motorway'].includes(e.tags.highway);
-            if (l.key === 'highway_main' && !isMain) return;
-            if (l.key === 'highway' && isMain) return;
-            if (l.key !== 'highway' && l.key !== 'highway_main' && !e.tags[l.key]) return;
-
-            e.geometry.forEach((p, i) => {
-                const x = (p.lon - state.loc.lon) * ms * Math.cos(state.loc.lat * Math.PI / 180);
-                const y = -(p.lat - state.loc.lat) * ms;
-                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-            });
-        });
-        ctx.strokeStyle = l.c;
-        ctx.lineWidth = l.w;
-        if (l.glow) {
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = l.c;
+        ctx.strokeStyle = isMain ? col.rd : col.st;
+        ctx.lineWidth = isMain ? 8 : 3;
+        
+        if(col.glow && isMain) {
+            ctx.shadowBlur = 15; ctx.shadowColor = col.rd;
         }
+
+        e.geometry.forEach((p, i) => {
+            const x = cx + (p.lon - state.loc.lon) * ms * Math.cos(state.loc.lat * Math.PI/180);
+            const y = cy - (p.lat - state.loc.lat) * ms;
+            if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
         ctx.stroke();
         ctx.shadowBlur = 0;
     });
 
-    // MARKER
+    // Marker
     ctx.fillStyle = col.mk;
-    ctx.beginPath(); ctx.arc(0,0,15,0,Math.PI*2); ctx.fill();
-    ctx.restore();
+    ctx.beginPath(); ctx.arc(cx, cy, 14, 0, Math.PI*2); ctx.fill();
+}
+
+function renderStarContent(ctx, col, cx, cy, radius) {
+    for(let i=0; i<800; i++) {
+        const x = cx + (Math.random()-0.5) * 2500;
+        const y = cy + (Math.random()-0.5) * 2500;
+        const size = Math.random() * 4;
+        ctx.fillStyle = col.hw;
+        ctx.globalAlpha = Math.random();
+        ctx.beginPath(); ctx.arc(x, y, size, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha = 1.0;
 }
 
 function renderLabels(ctx, col) {
@@ -279,63 +234,34 @@ function renderLabels(ctx, col) {
     const font = document.getElementById('fontSelect').value;
 
     ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    // TITLE BLOCK
-    ctx.font = `700 ${fontSizes.title}px ${font}`;
-    const tw = ctx.measureText(title).width;
-    const th = fontSizes.title * 1.4;
-    ctx.fillStyle = col.hw;
-    ctx.fillRect(1240 - tw/2 - 60, 2800, tw + 120, th);
-    ctx.fillStyle = col.bg;
-    ctx.fillText(title, 1240, 2800 + th/2);
-
-    // SUBTITLE BLOCK
-    ctx.font = `400 ${fontSizes.subtitle}px ${font}`;
-    const sw = ctx.measureText(sub).width;
-    const sh = fontSizes.subtitle * 1.6;
-    ctx.fillStyle = col.hw;
-    ctx.fillRect(1240 - sw/2 - 40, 2800 + th + 30, sw + 80, sh);
-    ctx.fillStyle = col.bg;
-    ctx.fillText(sub, 1240, 2800 + th + 30 + sh/2);
-
-    // TAGLINE
-    if (msg) {
-        ctx.font = `italic ${fontSizes.tagline}px Georgia`;
-        const mw = ctx.measureText(msg).width;
+    
+    // Dynamic Label Sizing
+    function drawLabelBlock(text, y, fontSize, weight, padding) {
+        ctx.font = `${weight} ${fontSize}px ${font}`;
+        const metrics = ctx.measureText(text);
+        const w = metrics.width + padding * 2;
+        const h = fontSize * 1.5;
+        
         ctx.fillStyle = col.hw;
-        ctx.fillRect(1240 - mw/2 - 30, 2800 + th + sh + 70, mw + 60, fontSizes.tagline * 1.8);
+        ctx.fillRect(1240 - w/2, y, w, h);
+        
         ctx.fillStyle = col.bg;
-        ctx.fillText(msg, 1240, 2800 + th + sh + 70 + (fontSizes.tagline * 0.9));
+        ctx.fillText(text, 1240, y + h/1.4);
+        return h;
     }
+
+    let currentY = 2750;
+    currentY += drawLabelBlock(title, currentY, 90, '700', 80) + 30;
+    currentY += drawLabelBlock(sub, currentY, 40, '400', 50) + 50;
+    if(msg) drawLabelBlock(msg, currentY, 32, '300 italic', 40);
 }
 
-// ... Star calculation logic remains same but uses offCtx ...
-function renderStars(ctx) {
-    const radius = 1000;
-    const cx = 1240, cy = 1300;
-    ctx.fillStyle = state.circleColor;
-    if(state.shape === 'circle') {
-        ctx.beginPath(); ctx.arc(cx, cy, radius, 0, Math.PI*2); ctx.fill();
-        ctx.clip();
-    }
-    // Simple star points for preview
-    for(let i=0; i<500; i++) {
-        ctx.fillStyle = "#fff";
-        ctx.beginPath();
-        ctx.arc(Math.random()*2480, Math.random()*2400, 2, 0, Math.PI*2);
-        ctx.fill();
-    }
+function updateZoom() {
+    state.zoom = parseFloat(document.getElementById('zoomInput').value);
+    fetchMapData(state.loc.lat, state.loc.lon);
 }
 
-function exportPoster(fmt){
-    const link = document.createElement('a');
-    link.download = `poster-${Date.now()}.${fmt}`;
-    link.href = document.getElementById('posterCanvas').toDataURL(`image/${fmt}`, 1.0);
-    link.click();
-}
-
-function handleLocationInput(){
+function handleLocationInput() {
     const q = document.getElementById('locationSearch').value;
     if(q.length < 3) return;
     fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=5`)
@@ -343,30 +269,36 @@ function handleLocationInput(){
         const sug = document.getElementById('locationSuggestions');
         sug.innerHTML = ''; sug.style.display = 'block';
         data.forEach(d => {
-            const div = document.createElement('div');
-            div.style.padding = '10px'; div.style.cursor = 'pointer';
-            div.innerText = d.display_name;
-            div.onclick = () => {
+            const item = document.createElement('div');
+            item.style.padding = '12px'; item.style.cursor = 'pointer'; item.style.borderBottom = '1px solid #eee';
+            item.innerText = d.display_name;
+            item.onclick = () => {
                 state.loc = {lat: parseFloat(d.lat), lon: parseFloat(d.lon), name: d.display_name.split(',')[0]};
                 document.getElementById('titleInput').value = state.loc.name.toUpperCase();
                 document.getElementById('subtitleInput').value = `${state.loc.lat.toFixed(4)}° N, ${state.loc.lon.toFixed(4)}° W`;
                 sug.style.display = 'none';
                 fetchMapData(state.loc.lat, state.loc.lon);
             };
-            sug.appendChild(div);
+            sug.appendChild(item);
         });
     });
 }
 
-function useMyLocation(){
+function useMyLocation() {
     navigator.geolocation.getCurrentPosition(p => {
-        state.loc.lat = p.coords.latitude;
-        state.loc.lon = p.coords.longitude;
+        state.loc = {lat: p.coords.latitude, lon: p.coords.longitude, name: 'CURRENT LOCATION'};
         fetchMapData(state.loc.lat, state.loc.lon);
     });
 }
 
-// Initial Load
+function exportPoster() {
+    const link = document.createElement('a');
+    link.download = `poster-${state.loc.name}.png`;
+    link.href = document.getElementById('posterCanvas').toDataURL('image/png', 1.0);
+    link.click();
+}
+
+// Start
 fetchMapData(state.loc.lat, state.loc.lon);
 </script>
 </body>
