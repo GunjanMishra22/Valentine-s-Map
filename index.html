@@ -151,8 +151,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 <button class="btn" onclick="setTheme('strangerthings')" id="theme-strangerthings">Stranger Things</button>
 <button class="btn" onclick="setTheme('neonpink')" id="theme-neonpink">Neon Pink</button>
 <button class="btn" onclick="setTheme('mintgreen')" id="theme-mintgreen">Mint Green</button>
-<button class="btn" onclick="setTheme('cyberpink')" id="theme-cyberpink">Cyber Pink</button>
-<button class="btn" onclick="setTheme('minecraft')" id="theme-minecraft">Minecraft</button>
+<button class="btn" onclick="setTheme('cyberpunk')" id="theme-cyberpunk">Cyberpunk</button>
 </div>
 </div>
 <div class="panel">
@@ -193,15 +192,25 @@ let state={
   loadAttempts:0
 };
 
+// Updated themes object with 'mk' (Marker Color) and the new Cyberpunk theme
 const themes={
-  darkmode:{bg:'#0A0A0A',shapeBg:'#141414',st:'#FFFFFF',rd:'#EFEFEF',hw:'#E0E0E0',wt:'#B8B8B8',rl:'#D0D0D0'},
-  modern:{bg:'#F8F9FA',shapeBg:'#E8EAED',st:'#D0DAE8',rd:'#A0B0C8',hw:'#607080',wt:'#B0D5F5',rl:'#8090A0'},
-  vintage:{bg:'#F4E8D8',shapeBg:'#EAE0D0',st:'#DCD0B8',rd:'#B8A888',hw:'#8B7D67',wt:'#C0D0E0',rl:'#A0906E'},
-  strangerthings:{bg:'#0A0A0A',shapeBg:'#141414',st:'#FF1744',rd:'#FF4569',hw:'#FF0033',wt:'#8B0000',rl:'#CC0022',glow:true},
-  neonpink:{bg:'#FFF0F8',shapeBg:'#FFE8F3',st:'#FF1493',rd:'#FF69B4',hw:'#FF1493',wt:'#FFB6D9',rl:'#FF85C1',glow:true},
-  mintgreen:{bg:'#F0FFF4',shapeBg:'#E8FFF0',st:'#98D8C8',rd:'#6FA896',hw:'#48887B',wt:'#A0E8D8',rl:'#5FBA9F'},
-  cyberpink:{bg:'#0D0221',shapeBg:'#1A0D35',st:'#FF006E',rd:'#FF1493',hw:'#FF10F0',wt:'#8B008B',rl:'#FF1493',glow:true},
-  minecraft:{bg:'#7CBD7C',shapeBg:'#8BC98B',st:'#5C8F5C',rd:'#4A7A4A',hw:'#3A6A3A',wt:'#4A9AEA',rl:'#8B7355'}
+  darkmode:{bg:'#0A0A0A',shapeBg:'#141414',st:'#FFFFFF',rd:'#EFEFEF',hw:'#E0E0E0',wt:'#B8B8B8',rl:'#D0D0D0', mk: '#FFFFFF'},
+  modern:{bg:'#F8F9FA',shapeBg:'#E8EAED',st:'#D0DAE8',rd:'#A0B0C8',hw:'#607080',wt:'#B0D5F5',rl:'#8090A0', mk: '#1A2530'},
+  vintage:{bg:'#F4E8D8',shapeBg:'#EAE0D0',st:'#DCD0B8',rd:'#B8A888',hw:'#8B7D67',wt:'#C0D0E0',rl:'#A0906E', mk: '#3E3224'},
+  strangerthings:{bg:'#0A0A0A',shapeBg:'#141414',st:'#FF1744',rd:'#FF4569',hw:'#FF0033',wt:'#8B0000',rl:'#CC0022',glow:true, mk: '#FFD1D1'},
+  neonpink:{bg:'#FFF0F8',shapeBg:'#FFE8F3',st:'#FF1493',rd:'#FF69B4',hw:'#FF1493',wt:'#FFB6D9',rl:'#FF85C1',glow:true, mk: '#8B0046'},
+  mintgreen:{bg:'#F0FFF4',shapeBg:'#E8FFF0',st:'#98D8C8',rd:'#6FA896',hw:'#48887B',wt:'#A0E8D8',rl:'#5FBA9F', mk: '#235C4A'},
+  cyberpunk:{
+    bg:'#000000', 
+    shapeBg:'#000000', 
+    st:'#FF0000', // Streets: Bright Red
+    rd:'#00FFFF', // Highways (Secondary): Bright Cyan
+    hw:'#00FFFF', // Highways (Main): Bright Cyan
+    wt:'#553355', // Water/Other: Dull Purple
+    rl:'#884488', // Rail: Dull Purple (Lighter)
+    glow:true, 
+    mk:'#FFFFFF'  // Marker: Light
+  }
 };
 
 const fontSizes={
@@ -582,16 +591,17 @@ function drawMapPoster(ctx,w,h,col){
       }
     });
     
+    // Draw Location Marker using col.mk instead of col.hw
     const g=ctx.createRadialGradient(0,0,8,0,0,38);
     g.addColorStop(0,'#FFFFFF');
-    g.addColorStop(.4,col.hw);
+    g.addColorStop(.4,col.mk); // Changed to marker color
     g.addColorStop(1,col.bg);
     ctx.fillStyle=g;
     ctx.beginPath();
     ctx.arc(0,0,38,0,Math.PI*2);
     ctx.fill();
     
-    ctx.fillStyle=col.hw;
+    ctx.fillStyle=col.mk; // Changed to marker color
     ctx.beginPath();
     ctx.arc(0,0,16,0,Math.PI*2);
     ctx.fill();
