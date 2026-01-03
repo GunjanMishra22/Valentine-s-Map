@@ -9,29 +9,30 @@
 @font-face{font-family:'ITC Benguiat';src:url('https://cdn.jsdelivr.net/gh/toribiodiego/Stranger-Things@main/ITCBenguiatStd-Bold.woff') format('woff');font-weight:bold;font-style:normal}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
-.header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:30px 20px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.15)}
-.header h1{font-size:32px;margin-bottom:8px;font-weight:700}
-.header p{font-size:16px;opacity:.95}
+.header{background:linear-gradient(135deg,#2d3748 0%,#1a202c 100%);color:#fff;padding:40px 20px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.25);position:relative}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#667eea,#764ba2,#f093fb)}
+.header h1{font-size:36px;margin-bottom:10px;font-weight:700;letter-spacing:1px}
+.header p{font-size:17px;opacity:.85;font-weight:300}
 .container{max-width:1600px;margin:0 auto;padding:30px 20px}
 .grid{display:grid;grid-template-columns:380px 1fr;gap:30px}
-.panel{background:#fff;border-radius:16px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,.08);margin-bottom:24px}
-.panel h2{font-size:20px;margin-bottom:20px;color:#2c3e50;font-weight:600;border-bottom:2px solid #e9ecef;padding-bottom:12px}
+.panel{background:#fff;border-radius:20px;padding:32px;box-shadow:0 4px 20px rgba(0,0,0,.06);margin-bottom:24px;border:1px solid #f0f0f0}
+.panel h2{font-size:14px;margin-bottom:24px;color:#1a202c;font-weight:600;border-bottom:2px solid #e9ecef;padding-bottom:14px;text-transform:uppercase;letter-spacing:1.2px}
 .btn-group{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.btn{padding:14px;border:2px solid #e0e0e0;border-radius:10px;background:#fff;cursor:pointer;transition:all .3s;font-size:13px;text-align:center;font-weight:500}
-.btn:hover{border-color:#667eea;transform:translateY(-2px);box-shadow:0 4px 8px rgba(102,126,234,.2)}
-.btn.active{border-color:#667eea;background:linear-gradient(135deg,#667eea15,#764ba215);color:#667eea;font-weight:600}
+.btn{padding:16px;border:2px solid #e8e8e8;border-radius:12px;background:#fff;cursor:pointer;transition:all .3s ease;font-size:14px;text-align:center;font-weight:500;color:#2c3e50}
+.btn:hover{border-color:#667eea;transform:translateY(-2px);box-shadow:0 6px 16px rgba(102,126,234,.15);background:#f8f9ff}
+.btn.active{border-color:#667eea;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-weight:600;box-shadow:0 4px 12px rgba(102,126,234,.3)}
 .form-group{margin-bottom:18px}
 .form-group label{display:block;font-size:14px;font-weight:600;margin-bottom:10px;color:#495057}
-.form-group input,.form-group select{width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:10px;font-size:14px;transition:all .3s}
-.form-group input:focus,.form-group select:focus{outline:0;border-color:#667eea;box-shadow:0 0 0 4px rgba(102,126,234,.1)}
+.form-group input,.form-group select{width:100%;padding:14px;border:2px solid #e8e8e8;border-radius:12px;font-size:14px;transition:all .3s ease;background:#fafafa}
+.form-group input:focus,.form-group select:focus{outline:0;border-color:#667eea;box-shadow:0 0 0 4px rgba(102,126,234,.1);background:#fff}
 .theme-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.export-btn{width:100%;padding:16px;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;transition:all .3s}
-.export-btn.primary{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff}
-.export-btn.primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(102,126,234,.4)}
-.export-btn.secondary{background:#6c757d;color:#fff}
-.canvas-container{background:#fff;border-radius:16px;padding:30px;box-shadow:0 2px 12px rgba(0,0,0,.08);display:flex;justify-content:center;align-items:center;position:relative}
-#posterCanvas{max-width:100%;height:auto;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
-/* REMOVED LOADING OVERLAY CSS */
+.export-btn{width:100%;padding:18px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:12px;transition:all .3s ease;letter-spacing:.5px}
+.export-btn.primary{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;box-shadow:0 4px 12px rgba(102,126,234,.3)}
+.export-btn.primary:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(102,126,234,.4)}
+.export-btn.secondary{background:#64748b;color:#fff;box-shadow:0 4px 12px rgba(100,116,139,.2)}
+.export-btn.secondary:hover{background:#475569;transform:translateY(-2px);box-shadow:0 6px 16px rgba(100,116,139,.3)}
+.canvas-container{background:#fff;border-radius:20px;padding:40px;box-shadow:0 4px 24px rgba(0,0,0,.08);display:flex;justify-content:center;align-items:center;position:relative;border:1px solid #f0f0f0}
+#posterCanvas{max-width:100%;height:auto;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.15)}
 .error-msg{background:#fee;color:#c33;padding:12px;border-radius:8px;margin-top:12px;font-size:13px;display:none}
 .error-msg.show{display:block}
 @media(max-width:1200px){.grid{grid-template-columns:1fr}}
@@ -39,24 +40,24 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 </head>
 <body>
 <div class="header">
-<h1>✨ Premium Poster Generator</h1>
+<h1>Premium Poster Generator</h1>
 <p>Create stunning map and star map posters</p>
 </div>
 <div class="container">
 <div class="grid">
 <div>
 <div class="panel">
-<h2>🎨 Poster Type</h2>
+<h2>Poster Type</h2>
 <div class="btn-group">
-<button class="btn active" onclick="setPosterType('map')" id="btn-map">🗺️<br>Map</button>
-<button class="btn" onclick="setPosterType('star')" id="btn-star">⭐<br>Stars</button>
+<button class="btn active" onclick="setPosterType('map')" id="btn-map">Map</button>
+<button class="btn" onclick="setPosterType('star')" id="btn-star">Stars</button>
 </div>
 </div>
 <div class="panel" id="shapePanel" style="display:none">
-<h2>📐 Shape</h2>
+<h2>Shape</h2>
 <div class="btn-group">
-<button class="btn active" onclick="setShape('full')" id="btn-full">⬛<br>Full</button>
-<button class="btn" onclick="setShape('circle')" id="btn-circle">⭕<br>Circle</button>
+<button class="btn active" onclick="setShape('full')" id="btn-full">Full</button>
+<button class="btn" onclick="setShape('circle')" id="btn-circle">Circle</button>
 </div>
 <div id="circleColorPanel" style="display:none;margin-top:20px">
 <div class="form-group">
@@ -66,8 +67,8 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 </div>
 </div>
 <div class="panel">
-<h2>📍 Location</h2>
-<button class="export-btn primary" onclick="useMyLocation()" id="gpsBtn">📍 Use My GPS</button>
+<h2>Location</h2>
+<button class="export-btn primary" onclick="useMyLocation()" id="gpsBtn">Use My GPS</button>
 <div style="text-align:center;margin:16px 0;color:#868e96;font-size:13px">— OR —</div>
 <div class="form-group">
 <label>Search Location</label>
@@ -80,26 +81,26 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 </div>
 <div id="starControls" style="display:none;margin-top:20px">
 <div class="form-group">
-<label>📅 Date</label>
+<label>Date</label>
 <input type="date" id="dateInput" value="2024-01-01" onchange="drawPoster()">
 </div>
 <div class="form-group">
-<label>⏰ Time</label>
+<label>Time</label>
 <input type="time" id="timeInput" value="20:00" onchange="drawPoster()">
 </div>
 </div>
 <div id="mapControls" style="margin-top:20px">
 <div class="form-group">
-<label>🔍 Zoom</label>
+<label>Zoom Level</label>
 <input type="range" id="zoomInput" min="0.8" max="3" value="1.5" step="0.1" oninput="updateZoom()">
 <div style="text-align:center;margin-top:8px;font-size:13px;color:#6c757d">Level: <span id="zoomValue">1.5</span>x</div>
 </div>
-<button class="export-btn secondary" onclick="retryMapLoad()" id="retryBtn" style="display:none;margin-top:10px">🔄 Retry Loading Map</button>
+<button class="export-btn secondary" onclick="retryMapLoad()" id="retryBtn" style="display:none;margin-top:10px">Retry Loading Map</button>
 </div>
 <div id="mapError" class="error-msg"></div>
 </div>
 <div class="panel">
-<h2>✏️ Text</h2>
+<h2>Text Content</h2>
 <div class="form-group">
 <label>Title</label>
 <input type="text" id="titleInput" value="NEW YORK" oninput="debouncedDraw()">
@@ -135,21 +136,22 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#2c3e50}
 </div>
 </div>
 <div class="panel" id="themePanel">
-<h2>🎨 Theme</h2>
+<h2>Color Theme</h2>
 <div class="theme-grid">
-<button class="btn active" onclick="setTheme('darkmode')" id="theme-darkmode">Dark Mode</button>
-<button class="btn" onclick="setTheme('modern')" id="theme-modern">Modern</button>
-<button class="btn" onclick="setTheme('vintage')" id="theme-vintage">Vintage</button>
-<button class="btn" onclick="setTheme('strangerthings')" id="theme-strangerthings">Stranger Things</button>
-<button class="btn" onclick="setTheme('neonpink')" id="theme-neonpink">Neon Pink</button>
-<button class="btn" onclick="setTheme('mintgreen')" id="theme-mintgreen">Mint Green</button>
-<button class="btn" onclick="setTheme('cyberpunk')" id="theme-cyberpunk">Cyberpunk</button>
+<button class="btn active" onclick="setTheme('midnight')" id="theme-midnight">Midnight</button>
+<button class="btn" onclick="setTheme('charcoal')" id="theme-charcoal">Charcoal</button>
+<button class="btn" onclick="setTheme('navy')" id="theme-navy">Navy</button>
+<button class="btn" onclick="setTheme('slate')" id="theme-slate">Slate</button>
+<button class="btn" onclick="setTheme('sage')" id="theme-sage">Sage</button>
+<button class="btn" onclick="setTheme('blush')" id="theme-blush">Blush</button>
+<button class="btn" onclick="setTheme('lavender')" id="theme-lavender">Lavender</button>
+<button class="btn" onclick="setTheme('sand')" id="theme-sand">Sand</button>
 </div>
 </div>
 <div class="panel">
-<h2>💾 Export</h2>
-<button class="export-btn primary" onclick="exportPoster('png')">⬇️ Download PNG</button>
-<button class="export-btn secondary" onclick="exportPoster('jpeg')">⬇️ Download JPEG</button>
+<h2>Export</h2>
+<button class="export-btn primary" onclick="exportPoster('png')">Download PNG</button>
+<button class="export-btn secondary" onclick="exportPoster('jpeg')">Download JPEG</button>
 </div>
 </div>
 <div>
@@ -167,7 +169,7 @@ let locTimeout,fetchTimeout,drawTimeout,mapFetchTimeout;
 
 let state={
   posterType:'map',
-  theme:'darkmode',
+  theme:'midnight',
   shape:'full',
   zoom:1.5,
   loc:{lat:40.7128,lon:-74.006,name:'New York'},
@@ -179,23 +181,14 @@ let state={
 };
 
 const themes={
-  darkmode:{bg:'#0A0A0A',shapeBg:'#141414',st:'#FFFFFF',rd:'#EFEFEF',hw:'#E0E0E0',wt:'#B8B8B8',rl:'#D0D0D0', mk: '#FFFFFF'},
-  modern:{bg:'#F8F9FA',shapeBg:'#E8EAED',st:'#D0DAE8',rd:'#A0B0C8',hw:'#607080',wt:'#B0D5F5',rl:'#8090A0', mk: '#1A2530'},
-  vintage:{bg:'#F4E8D8',shapeBg:'#EAE0D0',st:'#DCD0B8',rd:'#B8A888',hw:'#8B7D67',wt:'#C0D0E0',rl:'#A0906E', mk: '#3E3224'},
-  strangerthings:{bg:'#0A0A0A',shapeBg:'#141414',st:'#FF1744',rd:'#FF4569',hw:'#FF0033',wt:'#8B0000',rl:'#CC0022',glow:true, mk: '#FFD1D1'},
-  neonpink:{bg:'#FFF0F8',shapeBg:'#FFE8F3',st:'#FF1493',rd:'#FF69B4',hw:'#FF1493',wt:'#FFB6D9',rl:'#FF85C1',glow:true, mk: '#8B0046'},
-  mintgreen:{bg:'#F0FFF4',shapeBg:'#E8FFF0',st:'#98D8C8',rd:'#6FA896',hw:'#48887B',wt:'#A0E8D8',rl:'#5FBA9F', mk: '#235C4A'},
-  cyberpunk:{
-    bg:'#000000',      // Canvas: Black
-    shapeBg:'#000000',
-    st:'#fb0a26',      // Streets: Red
-    rd:'#46ebeb',      // Secondary: Cyan
-    hw:'#46ebeb',      // Highways: Cyan
-    wt:'#133e7c',      // Details: Deep Blue
-    rl:'#133e7c',
-    glow:true, 
-    mk:'#FFFFFF'       // Marker: White
-  }
+  midnight:{bg:'#0A0A0A',shapeBg:'#141414',st:'#FFFFFF',rd:'#EFEFEF',hw:'#E0E0E0',wt:'#B8B8B8',rl:'#D0D0D0',mk:'#FFFFFF'},
+  charcoal:{bg:'#1C1C1E',shapeBg:'#2C2C2E',st:'#F5F5F7',rd:'#E8E8EA',hw:'#D1D1D6',wt:'#AEAEB2',rl:'#C7C7CC',mk:'#FFFFFF'},
+  navy:{bg:'#0F1C2E',shapeBg:'#1A2942',st:'#B8C5D6',rd:'#8FA3BE',hw:'#6B87A8',wt:'#4A6380',rl:'#5E799A',mk:'#E8EDF3'},
+  slate:{bg:'#1E293B',shapeBg:'#334155',st:'#CBD5E1',rd:'#94A3B8',hw:'#64748B',wt:'#475569',rl:'#64748B',mk:'#F1F5F9'},
+  sage:{bg:'#F5F7F4',shapeBg:'#E8EBE7',st:'#8A9B8E',rd:'#6B7C70',hw:'#4A5D4E',wt:'#9FB5A3',rl:'#7D9481',mk:'#2D3E32'},
+  blush:{bg:'#FFF5F7',shapeBg:'#FFE8EC',st:'#E8B4BC',rd:'#D8949E',hw:'#C67680',wt:'#F0CAD0',rl:'#E0A8B0',mk:'#8B4450'},
+  lavender:{bg:'#F8F7FC',shapeBg:'#F0EEF9',st:'#B8B0D8',rd:'#9B91C4',hw:'#7E73B0',wt:'#C8C0E0',rl:'#A89BD0',mk:'#4A3D6E'},
+  sand:{bg:'#FAF8F3',shapeBg:'#F2EFE8',st:'#C8BBA8',rd:'#B0A391',hw:'#8B7E6C',wt:'#D6CCBA',rl:'#BFB5A3',mk:'#5E5547'}
 };
 
 const fontSizes={
@@ -226,7 +219,6 @@ async function fetchMapData(lat,lon,retry=false){
   }
   
   state.isLoading=true;
-  // LOADING UI REMOVED
   hideError();
   
   clearTimeout(fetchTimeout);
@@ -283,7 +275,6 @@ async function fetchMapData(lat,lon,retry=false){
     }
   }finally{
     state.isLoading=false;
-    // LOADING UI REMOVED
     drawPoster();
   }
 }
@@ -316,12 +307,12 @@ function useMyLocation(){
   if(!btn||btn.disabled)return;
   
   btn.disabled=true;
-  btn.textContent='📍 Getting...';
+  btn.textContent='Getting Location...';
   
   if(!navigator.geolocation){
     alert('GPS not supported by your browser');
     btn.disabled=false;
-    btn.textContent='📍 Use My GPS';
+    btn.textContent='Use My GPS';
     return;
   }
   
@@ -330,7 +321,7 @@ function useMyLocation(){
       const lat=p.coords.latitude;
       const lon=p.coords.longitude;
       
-      btn.textContent='✅ Location Found';
+      btn.textContent='Location Found';
       
       fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
         .then(r=>r.json())
@@ -338,17 +329,17 @@ function useMyLocation(){
           const n=d.address.city||d.address.town||d.address.village||d.address.county||'Your Location';
           updateLocationState(lat,lon,n);
           btn.disabled=false;
-          btn.textContent='📍 Use My GPS';
+          btn.textContent='Use My GPS';
         })
         .catch(e=>{
           updateLocationState(lat,lon,'Your Location');
           btn.disabled=false;
-          btn.textContent='📍 Use My GPS';
+          btn.textContent='Use My GPS';
         });
     },
     function(err){
       btn.disabled=false;
-      btn.textContent='📍 Use My GPS';
+      btn.textContent='Use My GPS';
       alert('Could not access location: '+err.message);
     },
     {enableHighAccuracy:true,timeout:10000,maximumAge:0}
@@ -477,6 +468,14 @@ function updateCircleColor(){
   drawPoster();
 }
 
+function getTextColorForBackground(hexColor){
+  const r=parseInt(hexColor.slice(1,3),16);
+  const g=parseInt(hexColor.slice(3,5),16);
+  const b=parseInt(hexColor.slice(5,7),16);
+  const luminance=(0.299*r+0.587*g+0.114*b)/255;
+  return luminance>0.5?'#1A1A1A':'#FFFFFF';
+}
+
 function debouncedDraw(){
   clearTimeout(drawTimeout);
   drawTimeout=setTimeout(()=>drawPoster(),100);
@@ -512,14 +511,11 @@ function drawMapPoster(ctx,w,h,col){
     
     ctx.translate(cx,cy);
     
-    const isGlowTheme=col.glow;
-    const isCyberpunk=state.theme==='cyberpunk';
-    
     const layers=[
       {tag:'waterway',color:col.wt,width:3.2,alpha:0.75},
       {tag:'railway',color:col.rl,width:2.4,alpha:1},
-      {tag:'highway',types:['footway','path','pedestrian'],color:col.st,width:1.2,alpha:isGlowTheme?0.4:1},
-      {tag:'highway',types:['residential','unclassified','service'],color:col.st,width:2,alpha:isGlowTheme?0.5:1},
+      {tag:'highway',types:['footway','path','pedestrian'],color:col.st,width:1.2,alpha:1},
+      {tag:'highway',types:['residential','unclassified','service'],color:col.st,width:2,alpha:1},
       {tag:'highway',types:['tertiary','secondary','primary'],color:col.rd,width:3.2,alpha:1},
       {tag:'highway',types:['trunk','motorway','trunk_link','motorway_link'],color:col.hw,width:4.5,alpha:1}
     ];
@@ -553,31 +549,15 @@ function drawMapPoster(ctx,w,h,col){
       
       if(pathCount>0){
         ctx.strokeStyle=layer.color;
-        
-        // CUSTOM CYBERPUNK THICKNESS LOGIC
-        let lw = layer.width;
-        if(isCyberpunk && layer.color === col.st) {
-           // If it's the red street layer in cyberpunk, make it thicker and glow more
-           lw = layer.width * 2.5; 
-           ctx.shadowBlur = 15; 
-           ctx.shadowColor = layer.color;
-        } else if (isGlowTheme) {
-           ctx.shadowBlur = 8;
-           ctx.shadowColor = layer.color;
-        }
-
-        ctx.lineWidth=lw;
+        ctx.lineWidth=layer.width;
         ctx.lineCap='round';
         ctx.lineJoin='round';
         ctx.globalAlpha=layer.alpha||1;
-        
         ctx.stroke();
-        ctx.shadowBlur=0;
         ctx.globalAlpha=1;
       }
     });
     
-    // Draw Location Marker
     const g=ctx.createRadialGradient(0,0,8,0,0,38);
     g.addColorStop(0,'#FFFFFF');
     g.addColorStop(.4,col.mk); 
@@ -587,7 +567,7 @@ function drawMapPoster(ctx,w,h,col){
     ctx.arc(0,0,38,0,Math.PI*2);
     ctx.fill();
     
-    ctx.fillStyle=col.mk; 
+    ctx.fillStyle=col.mk;
     ctx.beginPath();
     ctx.arc(0,0,16,0,Math.PI*2);
     ctx.fill();
@@ -603,7 +583,9 @@ function drawMapPoster(ctx,w,h,col){
 }
 
 function drawStarPoster(ctx,w,h){
-  const nightCol={bg:'#0A1128',shapeBg:state.circleColor,sbg:'#050A15',sfg:'#E8F0FF',hw:'#7C8BC0',rd:'#5D7090'};
+  const maskColor=state.circleColor;
+  const textColor=getTextColorForBackground(maskColor);
+  const nightCol={bg:'#0A1128',shapeBg:maskColor,sbg:'#050A15',sfg:'#E8F0FF',hw:textColor,rd:textColor,txtColor:textColor};
   
   ctx.fillStyle=nightCol.bg;
   ctx.fillRect(0,0,w,h);
@@ -807,29 +789,23 @@ function drawLabels(ctx,w,h,col){
   const sizeKey=document.getElementById('fontSizeSelect').value;
   const sizes=fontSizes[sizeKey];
   
-  // LOGIC CHANGE: Solid Light Background Box with Canvas-Colored Text
-  
   ctx.font=`bold ${sizes.title}px ${font}`;
   ctx.textAlign='center';
   ctx.textBaseline='middle';
   const tw=ctx.measureText(title).width;
   
-  // Solid Box (Highlight Color)
   ctx.fillStyle=col.hw; 
   ctx.fillRect(w/2-tw/2-40,h-340,tw+80,sizes.title+30);
   
-  // Text (Canvas Background Color for reverse effect)
   ctx.fillStyle=col.bg; 
   ctx.fillText(title,w/2,h-290);
   
   ctx.font=`${sizes.subtitle}px ${font}`;
   const sw=ctx.measureText(subtitle).width;
   
-  // Solid Box
   ctx.fillStyle=col.hw;
   ctx.fillRect(w/2-sw/2-30,h-220,sw+60,sizes.subtitle+35);
   
-  // Text
   ctx.fillStyle=col.bg;
   ctx.fillText(subtitle,w/2,h-185);
   
@@ -837,11 +813,9 @@ function drawLabels(ctx,w,h,col){
     ctx.font=`italic ${sizes.tagline}px Georgia`;
     const mw=ctx.measureText(msg).width;
     
-    // Solid Box
     ctx.fillStyle=col.hw;
     ctx.fillRect(w/2-mw/2-25,h-130,mw+50,sizes.tagline+25);
     
-    // Text
     ctx.fillStyle=col.bg;
     ctx.fillText(msg,w/2,h-105);
   }
